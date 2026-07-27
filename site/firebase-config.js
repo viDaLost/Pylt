@@ -1,14 +1,13 @@
-// Вставьте сюда объект конфигурации из Firebase Console:
-// Project settings → General → Your apps → Web app → SDK setup and configuration.
-// Эти значения идентифицируют проект, но безопасность обеспечивают правила базы данных.
+// Firebase Web App configuration for project Pylt.
+// Realtime Database URL will be added after the database is created.
 export const firebaseConfig = {
-  apiKey: "PASTE_API_KEY",
-  authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
+  apiKey: "AIzaSyArRkd5H7Ivxm2ajDwOwL9xWnaqb0JaeXM",
+  authDomain: "pylt-613bc.firebaseapp.com",
   databaseURL: "https://PASTE_DATABASE_NAME.REGION.firebasedatabase.app",
-  projectId: "PASTE_PROJECT_ID",
-  storageBucket: "PASTE_PROJECT_ID.firebasestorage.app",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  projectId: "pylt-613bc",
+  storageBucket: "pylt-613bc.firebasestorage.app",
+  messagingSenderId: "416587042132",
+  appId: "1:416587042132:web:c20942d01397a42c61ccc1"
 };
 
 export const isFirebaseConfigured = Object.values(firebaseConfig).every(
