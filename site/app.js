@@ -6,6 +6,7 @@ import {
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 
 const SESSION_KEY = "cameraCueSessionV1";
+const ALERTS_KEY = "cameraCueAlertsV1";
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const $ = (id) => document.getElementById(id);
 const el = {
@@ -22,13 +23,16 @@ const el = {
   receiverCount: $("receiverCount"), participantsList: $("participantsList"), emptyParticipants: $("emptyParticipants"),
   finishRoomButton: $("finishRoomButton"), receiverSignal: $("receiverSignal"), receiverKicker: $("receiverKicker"),
   receiverStatusText: $("receiverStatusText"), receiverSubtext: $("receiverSubtext"), receiverOwnName: $("receiverOwnName"),
+  enableAlertsButton: $("enableAlertsButton"), alertsStatus: $("alertsStatus"),
   leaveRoomButton: $("leaveRoomButton"), backToStartButton: $("backToStartButton")
 };
 
 const state = {
   app: null, auth: null, db: null, user: null, roomId: null, role: null, name: null,
   room: null, connected: false, roomOff: null, connectionOff: null, disconnectOp: null,
-  wakeLock: null, lastActive: null, saved: readSession()
+  wakeLock: null, lastActive: null, saved: readSession(),
+  alertsEnabled: false, audioContext: null, serviceWorkerRegistration: null,
+  alertsPreferred: localStorage.getItem(ALERTS_KEY) === "enabled"
 };
 
 bindUi();
@@ -64,6 +68,7 @@ function bindUi() {
   el.roomCodeButton.addEventListener("click", copyRoomCode);
   el.clearActiveButton.addEventListener("click", () => chooseParticipant(null));
   el.finishRoomButton.addEventListener("click", finishRoom);
+  el.enableAlertsButton.addEventListener("click", enableAlerts);
   el.leaveRoomButton.addEventListener("click", leaveRoom);
   el.backToStartButton.addEventListener("click", resetToSetup);
   el.resumeButton.addEventListener("click", resumeSession);
@@ -144,6 +149,7 @@ async function enterRoom(roomId, role, name) {
   showRoom(role);
   el.roomCodeText.textContent = roomId;
   el.receiverOwnName.textContent = name;
+  if (role === "receiver") renderAlertsState();
   await setPresence(true);
   subscribeConnection();
   subscribeRoom();
@@ -215,9 +221,136 @@ function renderReceiver() {
   el.receiverKicker.textContent = isActive ? "СИГНАЛ РЕЖИССЁРА" : "ОЖИДАНИЕ КОМАНДЫ";
   el.receiverStatusText.textContent = isActive ? "ВЫ В КАДРЕ" : "НЕ В КАДРЕ";
   el.receiverSubtext.textContent = isActive ? "Камера сейчас снимает вас" : activeName ? `Сейчас в кадре: ${activeName}` : "Сейчас никто не выбран";
+
+  if (state.lastActive === null) {
+    state.lastActive = isActive;
+    updateAppBadge(isActive);
+    return;
+  }
+
   if (state.lastActive !== isActive) {
     state.lastActive = isActive;
-    navigator.vibrate?.(isActive ? [140, 80, 140] : [80]);
+    triggerReceiverAlert(isActive, activeName);
+  }
+}
+
+async function enableAlerts() {
+  clearError();
+  setLoading(el.enableAlertsButton, true);
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) throw new Error("Этот браузер не поддерживает звуковые сигналы.");
+
+    state.audioContext ||= new AudioContextClass();
+    if (state.audioContext.state === "suspended") await state.audioContext.resume();
+
+    state.alertsEnabled = true;
+    state.alertsPreferred = true;
+    localStorage.setItem(ALERTS_KEY, "enabled");
+
+    let notificationPermission = "unsupported";
+    if ("Notification" in window) {
+      notificationPermission = Notification.permission;
+      if (notificationPermission === "default") {
+        try {
+          notificationPermission = await Notification.requestPermission();
+        } catch (error) {
+          console.info("Запрос системных уведомлений недоступен", error);
+        }
+      }
+    }
+
+    await playCue(true, true);
+    navigator.vibrate?.([60, 45, 60]);
+    renderAlertsState(notificationPermission);
+  } catch (error) {
+    state.alertsEnabled = false;
+    showError(messageFor(error));
+    renderAlertsState();
+  } finally {
+    setLoading(el.enableAlertsButton, false);
+  }
+}
+
+function renderAlertsState(permission = ("Notification" in window ? Notification.permission : "unsupported")) {
+  if (!state.alertsEnabled) {
+    el.enableAlertsButton.textContent = state.alertsPreferred ? "Включить оповещения снова" : "Включить звук и уведомления";
+    el.enableAlertsButton.classList.remove("is-enabled");
+    el.alertsStatus.textContent = "Нажмите один раз перед съёмкой. На iPhone установите приложение на экран «Домой».";
+    return;
+  }
+
+  el.enableAlertsButton.textContent = "Оповещения включены";
+  el.enableAlertsButton.classList.add("is-enabled");
+  if (permission === "granted") {
+    el.alertsStatus.textContent = "Звук включён. При свёрнутом приложении также появится системное уведомление.";
+  } else if (permission === "denied") {
+    el.alertsStatus.textContent = "Звук включён, но системные уведомления запрещены в настройках телефона.";
+  } else {
+    el.alertsStatus.textContent = "Звук включён. Системные уведомления недоступны в этом режиме браузера.";
+  }
+}
+
+async function triggerReceiverAlert(isActive, activeName) {
+  if (state.alertsEnabled) await playCue(isActive);
+  navigator.vibrate?.(isActive ? [110, 65, 110] : [70]);
+  await updateAppBadge(isActive);
+  if (document.visibilityState !== "visible") await showSystemNotification(isActive, activeName);
+}
+
+async function playCue(isActive, isTest = false) {
+  if (!state.audioContext || (!state.alertsEnabled && !isTest)) return;
+  if (state.audioContext.state === "suspended") {
+    try { await state.audioContext.resume(); } catch { return; }
+  }
+
+  const start = state.audioContext.currentTime + 0.015;
+  const notes = isActive
+    ? [{ frequency: 880, offset: 0, duration: 0.12 }, { frequency: 1175, offset: 0.17, duration: 0.16 }]
+    : [{ frequency: 440, offset: 0, duration: 0.18 }];
+
+  for (const note of notes) {
+    const oscillator = state.audioContext.createOscillator();
+    const gain = state.audioContext.createGain();
+    const noteStart = start + note.offset;
+    const noteEnd = noteStart + note.duration;
+    oscillator.type = isActive ? "sine" : "triangle";
+    oscillator.frequency.setValueAtTime(note.frequency, noteStart);
+    gain.gain.setValueAtTime(0.0001, noteStart);
+    gain.gain.exponentialRampToValueAtTime(isTest ? 0.12 : 0.24, noteStart + 0.018);
+    gain.gain.exponentialRampToValueAtTime(0.0001, noteEnd);
+    oscillator.connect(gain).connect(state.audioContext.destination);
+    oscillator.start(noteStart);
+    oscillator.stop(noteEnd + 0.02);
+  }
+}
+
+async function showSystemNotification(isActive, activeName) {
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  try {
+    const registration = state.serviceWorkerRegistration || await navigator.serviceWorker?.ready;
+    if (!registration) return;
+    await registration.showNotification(isActive ? "Вы в кадре" : "Вы не в кадре", {
+      body: isActive ? "Камера сейчас снимает вас." : activeName ? `Сейчас в кадре: ${activeName}` : "Сейчас никто не выбран.",
+      icon: "./icons/icon-192.png",
+      badge: "./icons/icon-192.png",
+      tag: "camera-cue-status",
+      renotify: true,
+      silent: false,
+      vibrate: isActive ? [110, 65, 110] : [70],
+      data: { url: location.href }
+    });
+  } catch (error) {
+    console.info("Системное уведомление недоступно", error);
+  }
+}
+
+async function updateAppBadge(isActive) {
+  try {
+    if (isActive) await navigator.setAppBadge?.(1);
+    else await navigator.clearAppBadge?.();
+  } catch (error) {
+    console.info("Badge API недоступен", error);
   }
 }
 
@@ -301,6 +434,7 @@ function showEnded() {
   cleanupSubscriptions();
   forgetSession();
   releaseWakeLock();
+  updateAppBadge(false);
   el.setupView.classList.add("hidden");
   el.controllerView.classList.add("hidden");
   el.receiverView.classList.add("hidden");
@@ -311,8 +445,9 @@ function showEnded() {
 async function resetToSetup() {
   await cleanupSubscriptions();
   await releaseWakeLock();
+  await updateAppBadge(false);
   forgetSession();
-  Object.assign(state, { roomId: null, role: null, name: null, room: null, lastActive: null });
+  Object.assign(state, { roomId: null, role: null, name: null, room: null, lastActive: null, alertsEnabled: false });
   el.topbar.classList.add("hidden");
   el.controllerView.classList.add("hidden");
   el.receiverView.classList.add("hidden");
@@ -409,5 +544,12 @@ async function releaseWakeLock() {
 }
 
 function registerServiceWorker() {
-  if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(console.info));
+  if (!("serviceWorker" in navigator)) return;
+  window.addEventListener("load", async () => {
+    try {
+      state.serviceWorkerRegistration = await navigator.serviceWorker.register("./sw.js");
+    } catch (error) {
+      console.info("Service Worker недоступен", error);
+    }
+  });
 }
