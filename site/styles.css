@@ -94,6 +94,8 @@ h3 { margin-bottom: 8px; }
 .button--secondary { border-color: #375b91; background: #17335a; }
 .button--danger { border-color: rgba(255,77,95,.45); background: rgba(255,77,95,.13); }
 .button--ghost { border-color: var(--line); background: transparent; }
+.button--alert { width: 100%; min-height: 50px; border-color: rgba(255,209,102,.5); background: rgba(255,209,102,.13); color: #fff3c2; }
+.button--alert.is-enabled { border-color: rgba(39,209,127,.55); background: rgba(39,209,127,.16); color: #b9ffda; }
 .button.is-loading { color: transparent; position: relative; }
 .button.is-loading::after { content: ""; position: absolute; inset: 0; margin: auto; width: 20px; height: 20px; border: 3px solid rgba(0,0,0,.2); border-top-color: #04150c; border-radius: 50%; animation: spin .75s linear infinite; }
 @keyframes spin { to { transform: rotate(1turn); } }
@@ -133,8 +135,10 @@ h3 { margin-bottom: 8px; }
 .receiver-signal__kicker { margin-bottom: 18px; font-weight: 950; letter-spacing: .16em; text-shadow: 0 2px 12px rgba(0,0,0,.25); }
 .receiver-signal h1 { margin-bottom: 20px; font-size: clamp(52px, 16vw, 118px); line-height: .88; color: #fff; text-shadow: 0 6px 28px rgba(0,0,0,.28); }
 .receiver-signal__content > p:last-child { margin-bottom: 0; font-size: clamp(18px, 5vw, 28px); font-weight: 800; text-shadow: 0 2px 12px rgba(0,0,0,.25); }
-.receiver-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(5,7,10,.88); backdrop-filter: blur(14px); }
-.receiver-footer > div { display: grid; min-width: 0; }
+.receiver-footer { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: rgba(5,7,10,.9); backdrop-filter: blur(14px); }
+.alert-controls { grid-column: 1 / -1; display: grid; gap: 7px; min-width: 0; }
+.alert-controls__status { color: var(--muted); font-size: 12px; line-height: 1.35; }
+.receiver-footer__identity { display: grid; min-width: 0; align-content: center; }
 .receiver-footer strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .ended-view { min-height: 80vh; display: grid; place-items: center; }
@@ -147,6 +151,7 @@ h3 { margin-bottom: 8px; }
   .controller-actions { display: grid; }
   .participant-card { grid-template-columns: auto minmax(0,1fr); }
   .participant-card__action { grid-column: 1 / -1; width: 100%; }
+  .receiver-signal { padding-bottom: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
