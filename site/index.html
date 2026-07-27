@@ -11,6 +11,7 @@
   <link rel="icon" href="./icons/icon-192.png">
   <link rel="apple-touch-icon" href="./icons/icon-192.png">
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./enhanced-alerts.css">
 </head>
 <body>
   <noscript>Для работы приложения необходимо включить JavaScript.</noscript>
@@ -54,12 +55,8 @@
         </div>
 
         <div class="role-switch" role="tablist" aria-label="Выберите режим">
-          <button id="controllerTab" class="role-switch__button is-active" type="button" role="tab" aria-selected="true">
-            Пульт
-          </button>
-          <button id="receiverTab" class="role-switch__button" type="button" role="tab" aria-selected="false">
-            Приёмник
-          </button>
+          <button id="controllerTab" class="role-switch__button is-active" type="button" role="tab" aria-selected="true">Пульт</button>
+          <button id="receiverTab" class="role-switch__button" type="button" role="tab" aria-selected="false">Приёмник</button>
         </div>
 
         <div id="controllerSetup" class="card setup-card">
@@ -70,9 +67,7 @@
             <span>Имя управляющего</span>
             <input id="controllerNameInput" type="text" maxlength="40" autocomplete="name" value="Режиссёр" placeholder="Например: Режиссёр">
           </label>
-          <button id="createRoomButton" class="button button--primary button--large" type="button">
-            Создать комнату
-          </button>
+          <button id="createRoomButton" class="button button--primary button--large" type="button">Создать комнату</button>
         </div>
 
         <div id="receiverSetup" class="card setup-card hidden">
@@ -87,9 +82,7 @@
             <span>Ваше имя</span>
             <input id="receiverNameInput" type="text" maxlength="40" autocomplete="name" placeholder="Например: Анна">
           </label>
-          <button id="joinRoomButton" class="button button--primary button--large" type="button">
-            Подключиться
-          </button>
+          <button id="joinRoomButton" class="button button--primary button--large" type="button">Подключиться</button>
         </div>
 
         <p class="setup-note">Для синхронизации этой версии нужен интернет. Все телефоны могут работать через одну общую Wi‑Fi‑сеть.</p>
@@ -161,5 +154,6 @@
   </div>
 
   <script type="module" src="./app.js"></script>
+  <script type="module" src="./enhanced-alerts.js"></script>
 </body>
 </html>
