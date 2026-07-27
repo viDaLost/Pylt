@@ -1,0 +1,24 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rooms": {
+      "$roomId": {
+        ".read": "auth != null",
+        ".write": "auth != null && ((!data.exists() && newData.child('meta').child('controllerUid').val() === auth.uid) || (data.exists() && data.child('meta').child('controllerUid').val() === auth.uid))",
+        "meta": {
+          ".validate": "newData.hasChildren(['controllerUid', 'controllerName', 'createdAt', 'version']) && newData.child('controllerUid').isString() && newData.child('controllerName').isString() && newData.child('controllerName').val().length <= 40 && newData.child('version').isNumber()"
+        },
+        "activeParticipantId": {
+          ".validate": "!newData.exists() || (newData.isString() && root.child('rooms').child($roomId).child('participants').child(newData.val()).child('role').val() === 'receiver')"
+        },
+        "participants": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && root.child('rooms').child($roomId).exists()",
+            ".validate": "!newData.exists() || (newData.hasChildren(['name', 'role', 'online']) && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 40 && (newData.child('role').val() === 'receiver' || newData.child('role').val() === 'controller') && newData.child('online').isBoolean())"
+          }
+        }
+      }
+    }
+  }
+}

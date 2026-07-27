@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d12">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Мобильный пульт сигналов для съёмочной группы: кто сейчас в кадре.">
+  <title>Кадр-Сигнал</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <noscript>Для работы приложения необходимо включить JavaScript.</noscript>
+
+  <div id="app" class="app-shell">
+    <header id="topbar" class="topbar hidden">
+      <div class="topbar__left">
+        <span id="connectionDot" class="connection-dot" aria-hidden="true"></span>
+        <span id="connectionText">Подключение…</span>
+      </div>
+      <button id="roomCodeButton" class="room-code" type="button" title="Скопировать код комнаты">
+        Комната <strong id="roomCodeText">—</strong>
+      </button>
+    </header>
+
+    <main>
+      <section id="setupView" class="setup-view">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true">●</div>
+          <div>
+            <p class="eyebrow">Пульт съёмочной группы</p>
+            <h1>Кадр-Сигнал</h1>
+          </div>
+        </div>
+
+        <div id="configWarning" class="notice notice--warning hidden" role="alert">
+          <strong>Сначала подключите Firebase.</strong>
+          <span>Откройте файл <code>site/firebase-config.js</code> и вставьте настройки своего проекта.</span>
+        </div>
+
+        <div id="errorBox" class="notice notice--error hidden" role="alert"></div>
+
+        <div id="resumeCard" class="card resume-card hidden">
+          <p class="eyebrow">Сохранӑнная сессия</p>
+          <h2 id="resumeTitle">Продолжить работу</h2>
+          <p id="resumeDescription" class="muted"></p>
+          <div class="button-row">
+            <button id="resumeButton" class="button button--primary" type="button">Продолжить</button>
+            <button id="forgetSessionButton" class="button button--ghost" type="button">Забыть</button>
+          </div>
+        </div>
+
+        <div class="role-switch" role="tablist" aria-label="Выберите режим">
+          <button id="controllerTab" class="role-switch__button is-active" type="button" role="tab" aria-selected="true">
+            Пульт
+          </button>
+          <button id="receiverTab" class="role-switch__button" type="button" role="tab" aria-selected="false">
+            Приёмник
+          </button>
+        </div>
+
+        <div id="controllerSetup" class="card setup-card">
+          <p class="eyebrow">Управляющее устройство</p>
+          <h2>Создать комнату</h2>
+          <p class="muted">На этом телефоне будет список участников и кнопки выбора человека в кадре.</p>
+          <label class="field">
+            <span>Имя управляющего</span>
+            <input id="controllerNameInput" type="text" maxlength="40" autocomplete="name" value="Режиссёр" placeholder="Например: Режиссср">
+          </label>
+          <button id="createRoomButton" class="button button--primary button--large" type="button">
+            Создать комнату
+          </button>
+        </div>
+
+        <div id="receiverSetup" class="card setup-card hidden">
+          <p class="eyebrow">Устройство участника</p>
+          <h2>Подключиться</h2>
+          <p class="muted">Введите код с экрана пульта или откройте ссылку, которую прислал управляющий.</p>
+          <label class="field">
+            <span>Код комнаты</span>
+            <input id="roomInput" class="room-input" type="text" maxlength="6" inputmode="text" autocapitalize="characters" autocomplete="off" placeholder="ABC123">
+          </label>
+          <label class="field">
+            <span>Ваше имя</span>
+            <input id="receiverNameInput" type="text" maxlength="40" autocomplete="name" placeholder="Например: Анна">
+          </label>
+          <button id="joinRoomButton" class="button button--primary button--large" type="button">
+            Подключиться
+          </button>
+        </div>
+
+        <p class="setup-note">Для синхронизации этой версии нужен интернет. Все телефоны могут работать через одну объую Wi‑Fi‑сеть.</p>
+      </section>
+
+      <section id="controllerView" class="controller-view hidden">
+        <div class="controller-hero card">
+          <div>
+            <p class="eyebrow">Сейчас в кадре</p>
+            <h2 id="activePersonName">Никто</h2>
+            <p id="participantSummary" class="muted">Ожидание участников…</p>
+          </div>
+          <div id="activeSignal" class="mini-signal mini-signal--red" aria-label="Красный сигнал"></div>
+        </div>
+
+        <div class="controller-actions">
+          <button id="shareRoomButton" class="button button--secondary" type="button">Поделиться ссылкой</button>
+          <button id="clearActiveButton" class="button button--danger" type="button">Никто не в кадре</button>
+        </div>
+
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Подключённые устройства</p>
+            <h2>Участники</h2>
+          </div>
+          <span id="receiverCount" class="counter">0</span>
+        </div>
+
+        <div id="participantsList" class="participants-list"></div>
+        <div id="emptyParticipants" class="empty-state card">
+          <div class="empty-state__signal" aria-hidden="true"></div>
+          <h3>Пока никто не подключился</h3>
+          <p>Нажмите «Поделиться ссылкой» и отправьте её участникам съёмки.</p>
+        </div>
+
+        <button id="finishRoomButton" class="button button--ghost button--full" type="button">Завершить комнату</button>
+      </section>
+
+      <section id="receiverView" class="receiver-view hidden" aria-live="polite">
+        <div id="receiverSignal" class="receiver-signal receiver-signal--red">
+          <div class="receiver-signal__content">
+            <p id="receiverKicker" class="receiver-signal__kicker">ОЖИДАНИЕ КОМАНДЫ</p>
+            <h1 id="receiverStatusText">НЕ В КАДРЕ</h1>
+            <p id="receiverSubtext">Сейчас никто не выбран</p>
+          </div>
+        </div>
+        <div class="receiver-footer">
+          <div>
+            <span class="muted">Вы подключены как</span>
+            <strong id="receiverOwnName">—</strong>
+          </div>
+          <button id="leaveRoomButton" class="button button--ghost" type="button">Выйти</button>
+        </div>
+      </section>
+
+      <section id="endedView" class="ended-view hidden">
+        <div class="card ended-card">
+          <div class="ended-card__icon" aria-hidden="true">■</div>
+          <h2>Комната завершена</h2>
+          <p class="muted">Управляющий закрыл сессию или комната больше не существует.</p>
+          <button id="backToStartButton" class="button button--primary" type="button">На главный экран</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
