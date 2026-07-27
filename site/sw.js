@@ -1,9 +1,11 @@
-const CACHE_NAME = "camera-cue-shell-v2";
+const CACHE_NAME = "camera-cue-shell-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
+  "./enhanced-alerts.css",
   "./app.js",
+  "./enhanced-alerts.js",
   "./firebase-config.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
@@ -35,7 +37,9 @@ self.addEventListener("fetch", (event) => {
     request.mode === "navigate" ||
     url.pathname.endsWith("/firebase-config.js") ||
     url.pathname.endsWith("/app.js") ||
-    url.pathname.endsWith("/styles.css")
+    url.pathname.endsWith("/enhanced-alerts.js") ||
+    url.pathname.endsWith("/styles.css") ||
+    url.pathname.endsWith("/enhanced-alerts.css")
   ) {
     event.respondWith(networkFirst(request));
     return;
