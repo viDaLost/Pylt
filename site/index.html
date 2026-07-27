@@ -44,7 +44,7 @@
         <div id="errorBox" class="notice notice--error hidden" role="alert"></div>
 
         <div id="resumeCard" class="card resume-card hidden">
-          <p class="eyebrow">Сохранӑнная сессия</p>
+          <p class="eyebrow">Сохранённая сессия</p>
           <h2 id="resumeTitle">Продолжить работу</h2>
           <p id="resumeDescription" class="muted"></p>
           <div class="button-row">
@@ -68,7 +68,7 @@
           <p class="muted">На этом телефоне будет список участников и кнопки выбора человека в кадре.</p>
           <label class="field">
             <span>Имя управляющего</span>
-            <input id="controllerNameInput" type="text" maxlength="40" autocomplete="name" value="Режиссёр" placeholder="Например: Режиссср">
+            <input id="controllerNameInput" type="text" maxlength="40" autocomplete="name" value="Режиссёр" placeholder="Например: Режиссёр">
           </label>
           <button id="createRoomButton" class="button button--primary button--large" type="button">
             Создать комнату
@@ -92,7 +92,7 @@
           </button>
         </div>
 
-        <p class="setup-note">Для синхронизации этой версии нужен интернет. Все телефоны могут работать через одну объую Wi‑Fi‑сеть.</p>
+        <p class="setup-note">Для синхронизации этой версии нужен интернет. Все телефоны могут работать через одну общую Wi‑Fi‑сеть.</p>
       </section>
 
       <section id="controllerView" class="controller-view hidden">
@@ -137,7 +137,11 @@
           </div>
         </div>
         <div class="receiver-footer">
-          <div>
+          <div class="alert-controls">
+            <button id="enableAlertsButton" class="button button--alert" type="button">Включить звук и уведомления</button>
+            <span id="alertsStatus" class="alert-controls__status">Нажмите один раз перед съёмкой. На iPhone установите приложение на экран «Домой».</span>
+          </div>
+          <div class="receiver-footer__identity">
             <span class="muted">Вы подключены как</span>
             <strong id="receiverOwnName">—</strong>
           </div>
