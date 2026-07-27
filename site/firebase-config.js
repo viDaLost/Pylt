@@ -1,9 +1,8 @@
 // Firebase Web App configuration for project Pylt.
-// Realtime Database URL will be added after the database is created.
 export const firebaseConfig = {
   apiKey: "AIzaSyArRkd5H7Ivxm2ajDwOwL9xWnaqb0JaeXM",
   authDomain: "pylt-613bc.firebaseapp.com",
-  databaseURL: "https://PASTE_DATABASE_NAME.REGION.firebasedatabase.app",
+  databaseURL: "https://pylt-613bc-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "pylt-613bc",
   storageBucket: "pylt-613bc.firebasestorage.app",
   messagingSenderId: "416587042132",
