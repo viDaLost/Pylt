@@ -1,0 +1,85 @@
+.volume-panel {
+  display: grid;
+  gap: 10px;
+  width: min(520px, 100%);
+  padding: 14px 2px 2px;
+}
+
+.volume-panel__header,
+.volume-panel__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.volume-panel__header {
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.volume-panel__header output {
+  min-width: 48px;
+  text-align: right;
+  color: var(--green);
+}
+
+.volume-panel__row input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--green);
+  height: 32px;
+}
+
+.volume-panel__hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.android-help {
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  background: rgba(255,255,255,.04);
+}
+
+.android-help summary {
+  padding: 11px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.android-help ol {
+  margin: 0;
+  padding: 0 18px 13px 30px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.button--alert {
+  min-height: 52px;
+  border-color: rgba(39,209,127,.55);
+  background: rgba(39,209,127,.12);
+}
+
+.button--alert.is-enabled {
+  color: #06170e;
+  background: var(--green);
+}
+
+@media (max-width: 520px) {
+  .receiver-footer {
+    align-items: stretch;
+  }
+
+  .alert-controls {
+    width: 100%;
+  }
+
+  .volume-panel {
+    width: 100%;
+  }
+}
