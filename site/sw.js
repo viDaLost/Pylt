@@ -1,4 +1,4 @@
-const CACHE_NAME = "camera-cue-shell-v1";
+const CACHE_NAME = "camera-cue-shell-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -31,12 +31,33 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  if (request.mode === "navigate" || url.pathname.endsWith("/firebase-config.js")) {
+  if (
+    request.mode === "navigate" ||
+    url.pathname.endsWith("/firebase-config.js") ||
+    url.pathname.endsWith("/app.js") ||
+    url.pathname.endsWith("/styles.css")
+  ) {
     event.respondWith(networkFirst(request));
     return;
   }
 
   event.respondWith(cacheFirst(request));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const targetUrl = event.notification.data?.url || "./";
+  event.waitUntil((async () => {
+    const windowClients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    for (const client of windowClients) {
+      if ("focus" in client) {
+        await client.focus();
+        if ("navigate" in client) await client.navigate(targetUrl);
+        return;
+      }
+    }
+    if (self.clients.openWindow) await self.clients.openWindow(targetUrl);
+  })());
 });
 
 async function cacheFirst(request) {
