@@ -97,13 +97,51 @@
 .chat-message__name { color: #c9d1df; font-weight: 850; }
 .chat-message__text { margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; line-height: 1.35; }
 .chat-form {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0,1fr) auto;
+  grid-template-columns: auto minmax(0,1fr) auto;
   gap: 9px;
   padding: 11px 12px calc(11px + env(safe-area-inset-bottom));
   border-top: 1px solid #2a3040;
   background: #0c0f15;
 }
+.emoji-toggle {
+  width: 48px;
+  min-height: 48px;
+  border: 1px solid #2a3040;
+  border-radius: 14px;
+  color: #fff;
+  background: #171b25;
+  font-size: 22px;
+}
+.emoji-toggle.is-active { border-color: #6fa8ff; background: #20304d; }
+.emoji-picker {
+  position: absolute;
+  right: 12px;
+  bottom: calc(70px + env(safe-area-inset-bottom));
+  left: 12px;
+  z-index: 3;
+  display: none;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 7px;
+  max-height: 230px;
+  overflow-y: auto;
+  border: 1px solid #343c4f;
+  border-radius: 18px;
+  padding: 10px;
+  background: rgba(16,20,29,.98);
+  box-shadow: 0 -14px 40px rgba(0,0,0,.45);
+  backdrop-filter: blur(16px);
+}
+.emoji-picker.is-open { display: grid; }
+.emoji-picker__button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 12px;
+  background: #1a1f2b;
+  font-size: 24px;
+}
+.emoji-picker__button:active { transform: scale(.94); background: #263047; }
 .chat-input {
   width: 100%;
   min-height: 48px;
@@ -136,4 +174,5 @@
 @media (max-width: 520px) {
   .receiver-view:not(.hidden) ~ .chat-launcher { bottom: calc(190px + env(safe-area-inset-bottom)); }
   .chat-launcher { right: 12px; }
+  .emoji-picker { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
