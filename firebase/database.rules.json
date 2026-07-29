@@ -17,6 +17,13 @@
             ".write": "auth != null && auth.uid === $uid && root.child('rooms').child($roomId).exists()",
             ".validate": "!newData.exists() || (newData.hasChildren(['name', 'role', 'online']) && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 40 && (newData.child('role').val() === 'receiver' || newData.child('role').val() === 'controller') && newData.child('online').isBoolean())"
           }
+        },
+        "messages": {
+          ".indexOn": ["createdAt"],
+          "$messageId": {
+            ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid && root.child('rooms').child($roomId).child('participants').child(auth.uid).exists()",
+            ".validate": "newData.hasOnly(['uid', 'name', 'text', 'createdAt']) && newData.child('uid').isString() && newData.child('uid').val() === auth.uid && newData.child('name').isString() && newData.child('name').val() === root.child('rooms').child($roomId).child('participants').child(auth.uid).child('name').val() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 40 && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 500 && newData.child('createdAt').isNumber()"
+          }
         }
       }
     }
