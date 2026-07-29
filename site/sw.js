@@ -1,4 +1,4 @@
-const CACHE_NAME = "camera-cue-shell-v7";
+const CACHE_NAME = "camera-cue-shell-v8";
 const APP_SHELL = [
   "./",
   "./index.html",
