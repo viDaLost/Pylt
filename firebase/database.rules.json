@@ -23,20 +23,26 @@
           "$messageId": {
             ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid && root.child('rooms').child($roomId).child('participants').child(auth.uid).exists()",
             ".validate": "newData.hasChildren(['uid', 'name', 'text', 'createdAt'])",
-            "uid": {
-              ".validate": "newData.isString() && newData.val() === auth.uid"
-            },
-            "name": {
-              ".validate": "newData.isString() && newData.val() === root.child('rooms').child($roomId).child('participants').child(auth.uid).child('name').val() && newData.val().length > 0 && newData.val().length <= 40"
-            },
-            "text": {
-              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500"
-            },
-            "createdAt": {
-              ".validate": "newData.isNumber()"
-            },
-            "$other": {
-              ".validate": false
+            "uid": { ".validate": "newData.isString() && newData.val() === auth.uid" },
+            "name": { ".validate": "newData.isString() && newData.val() === root.child('rooms').child($roomId).child('participants').child(auth.uid).child('name').val() && newData.val().length > 0 && newData.val().length <= 40" },
+            "text": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 500" },
+            "createdAt": { ".validate": "newData.isNumber()" },
+            "$other": { ".validate": false }
+          }
+        },
+        "voice": {
+          ".read": "auth != null && root.child('rooms').child($roomId).child('participants').child(auth.uid).exists()",
+          "members": {
+            "$uid": {
+              ".write": "auth != null && auth.uid === $uid && root.child('rooms').child($roomId).child('participants').child(auth.uid).exists()"
+            }
+          },
+          "speaker": {
+            ".write": "auth != null && root.child('rooms').child($roomId).child('participants').child(auth.uid).exists() && (!newData.exists() || newData.child('uid').val() === auth.uid)"
+          },
+          "connections": {
+            "$pairId": {
+              ".write": "auth != null && root.child('rooms').child($roomId).child('participants').child(auth.uid).exists()"
             }
           }
         }
