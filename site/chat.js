@@ -7,6 +7,7 @@ import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 
 const SESSION_KEY = "cameraCueSessionV1";
 const LAST_READ_PREFIX = "cameraCueChatRead:";
+const EMOJIS = ["😀", "😂", "😊", "👍", "👎", "👌", "👏", "🙏", "❤️", "🔥", "🎬", "🎥", "🎤", "✅", "❌", "⚠️", "👀", "🤫", "⏱️", "🚀"];
 const app = isFirebaseConfigured ? (getApps().length ? getApp() : initializeApp(firebaseConfig)) : null;
 const auth = app ? getAuth(app) : null;
 const db = app ? getDatabase(app) : null;
@@ -18,6 +19,7 @@ let displayName = null;
 let roomMessagesOff = null;
 let messages = [];
 let open = false;
+let emojiOpen = false;
 let lastSessionSignature = "";
 
 if (auth && db) {
@@ -49,6 +51,8 @@ function buildChatUi() {
       </header>
       <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
       <form id="chatForm" class="chat-form">
+        <div id="emojiPicker" class="emoji-picker" aria-label="Смайлики"></div>
+        <button id="emojiToggle" class="emoji-toggle" type="button" aria-label="Открыть смайлики" aria-expanded="false">😊</button>
         <textarea id="chatInput" class="chat-input" maxlength="500" rows="1" placeholder="Сообщение…" aria-label="Текст сообщения"></textarea>
         <button id="chatSend" class="chat-send" type="submit" aria-label="Отправить">➤</button>
         <p id="chatError" class="chat-error"></p>
@@ -66,13 +70,26 @@ function buildChatUi() {
     form: overlay.querySelector("#chatForm"),
     input: overlay.querySelector("#chatInput"),
     send: overlay.querySelector("#chatSend"),
-    error: overlay.querySelector("#chatError")
+    error: overlay.querySelector("#chatError"),
+    emojiToggle: overlay.querySelector("#emojiToggle"),
+    emojiPicker: overlay.querySelector("#emojiPicker")
   };
+
+  for (const emoji of EMOJIS) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "emoji-picker__button";
+    button.textContent = emoji;
+    button.setAttribute("aria-label", `Добавить ${emoji}`);
+    button.addEventListener("click", () => insertEmoji(emoji, result));
+    result.emojiPicker.append(button);
+  }
 
   launcher.addEventListener("click", () => setOpen(true));
   result.close.addEventListener("click", () => setOpen(false));
   overlay.addEventListener("click", (event) => { if (event.target === overlay) setOpen(false); });
   result.form.addEventListener("submit", sendMessage);
+  result.emojiToggle.addEventListener("click", () => setEmojiOpen(!emojiOpen));
   result.input.addEventListener("keydown", (event) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
@@ -80,6 +97,24 @@ function buildChatUi() {
     }
   });
   return result;
+}
+
+function insertEmoji(emoji, result = ui) {
+  const input = result.input;
+  const start = input.selectionStart ?? input.value.length;
+  const end = input.selectionEnd ?? input.value.length;
+  const next = `${input.value.slice(0, start)}${emoji}${input.value.slice(end)}`.slice(0, 500);
+  input.value = next;
+  const cursor = Math.min(start + emoji.length, next.length);
+  input.focus();
+  input.setSelectionRange(cursor, cursor);
+}
+
+function setEmojiOpen(nextOpen) {
+  emojiOpen = nextOpen;
+  ui.emojiPicker.classList.toggle("is-open", emojiOpen);
+  ui.emojiToggle.classList.toggle("is-active", emojiOpen);
+  ui.emojiToggle.setAttribute("aria-expanded", String(emojiOpen));
 }
 
 function syncSession() {
@@ -140,6 +175,7 @@ function setOpen(nextOpen) {
   open = nextOpen;
   ui.overlay.classList.toggle("is-open", open);
   document.body.style.overflow = open ? "hidden" : "";
+  if (!open) setEmojiOpen(false);
   if (open) {
     markRead();
     window.setTimeout(() => {
@@ -163,6 +199,7 @@ async function sendMessage(event) {
       createdAt: serverTimestamp()
     });
     ui.input.value = "";
+    setEmojiOpen(false);
     markRead();
   } catch (error) {
     console.error(error);
