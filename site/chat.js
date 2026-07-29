@@ -1,13 +1,11 @@
 import { getApp, getApps, initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
-import {
-  getDatabase, limitToLast, onValue, orderByChild, push, query, ref, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
+import { getDatabase, limitToLast, onValue, orderByChild, push, query, ref, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
 import { firebaseConfig, isFirebaseConfigured } from "./firebase-config.js";
 
 const SESSION_KEY = "cameraCueSessionV1";
 const LAST_READ_PREFIX = "cameraCueChatRead:";
-const EMOJIS = ["😀", "😂", "😊", "👍", "👎", "👌", "👏", "🙏", "❤️", "🔥", "🎬", "🎥", "🎤", "✅", "❌", "⚠️", "👀", "🤫", "⏱️", "🚀"];
+const EMOJIS = ["😀","😂","😊","😍","🥳","👍","👎","👌","👏","🙏","❤️","🔥","🎬","🎥","🎤","✅","❌","⚠️","👀","🤫","⏱️","🚀","📢","💡","💯","🙌","🤝","😎","🤔","😅"];
 const app = isFirebaseConfigured ? (getApps().length ? getApp() : initializeApp(firebaseConfig)) : null;
 const auth = app ? getAuth(app) : null;
 const db = app ? getDatabase(app) : null;
@@ -21,6 +19,9 @@ let messages = [];
 let open = false;
 let emojiOpen = false;
 let lastSessionSignature = "";
+let initialSnapshotLoaded = false;
+let newestMessageId = null;
+let audioContext = null;
 
 if (auth && db) {
   onAuthStateChanged(auth, (nextUser) => {
@@ -32,6 +33,8 @@ if (auth && db) {
     if (document.visibilityState === "visible") syncSession();
   });
 }
+
+document.addEventListener("pointerdown", unlockChatAudio, { once: true, passive: true });
 
 function buildChatUi() {
   const launcher = document.createElement("button");
@@ -63,7 +66,7 @@ function buildChatUi() {
   const result = {
     launcher,
     overlay,
-    unread: overlay.ownerDocument.getElementById("chatUnread"),
+    unread: document.getElementById("chatUnread"),
     roomLabel: overlay.querySelector("#chatRoomLabel"),
     close: overlay.querySelector("#chatClose"),
     messages: overlay.querySelector("#chatMessages"),
@@ -90,6 +93,7 @@ function buildChatUi() {
   overlay.addEventListener("click", (event) => { if (event.target === overlay) setOpen(false); });
   result.form.addEventListener("submit", sendMessage);
   result.emojiToggle.addEventListener("click", () => setEmojiOpen(!emojiOpen));
+  result.input.addEventListener("input", autoGrowInput);
   result.input.addEventListener("keydown", (event) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
@@ -108,6 +112,7 @@ function insertEmoji(emoji, result = ui) {
   const cursor = Math.min(start + emoji.length, next.length);
   input.focus();
   input.setSelectionRange(cursor, cursor);
+  autoGrowInput();
 }
 
 function setEmojiOpen(nextOpen) {
@@ -117,13 +122,17 @@ function setEmojiOpen(nextOpen) {
   ui.emojiToggle.setAttribute("aria-expanded", String(emojiOpen));
 }
 
+function autoGrowInput() {
+  ui.input.style.height = "auto";
+  ui.input.style.height = `${Math.min(ui.input.scrollHeight, 120)}px`;
+}
+
 function syncSession() {
   const session = readSession();
   const controllerVisible = !document.getElementById("controllerView")?.classList.contains("hidden");
   const receiverVisible = !document.getElementById("receiverView")?.classList.contains("hidden");
   const activeRoom = Boolean(user && session?.roomId && (controllerVisible || receiverVisible));
   const signature = activeRoom ? `${session.roomId}:${session.name}:${user.uid}` : "";
-
   ui.launcher.classList.toggle("is-visible", activeRoom);
   if (!activeRoom) {
     if (roomId) leaveChatRoom();
@@ -147,18 +156,27 @@ function enterChatRoom(nextRoomId, nextName) {
   roomId = nextRoomId;
   displayName = nextName;
   messages = [];
+  newestMessageId = null;
+  initialSnapshotLoaded = false;
   ui.roomLabel.textContent = `Комната ${roomId}`;
   ui.messages.innerHTML = `<div class="chat-empty">Сообщений пока нет. Напишите первое сообщение.</div>`;
   const messagesQuery = query(ref(db, `rooms/${roomId}/messages`), orderByChild("createdAt"), limitToLast(100));
   roomMessagesOff = onValue(messagesQuery, (snapshot) => {
+    const previousNewestId = newestMessageId;
     const data = snapshot.val() || {};
     messages = Object.entries(data)
       .map(([id, value]) => ({ id, ...value }))
       .filter((message) => typeof message.text === "string")
       .sort((a, b) => Number(a.createdAt || 0) - Number(b.createdAt || 0));
+    newestMessageId = messages.at(-1)?.id || null;
     renderMessages();
     updateUnread();
-  }, () => showError("Чат недоступен. Опубликуйте обновлённые правила Firebase."));
+    if (initialSnapshotLoaded && newestMessageId && newestMessageId !== previousNewestId) {
+      const newest = messages.at(-1);
+      if (newest?.uid !== user?.uid) notifyNewMessage(newest);
+    }
+    initialSnapshotLoaded = true;
+  }, () => showError("Чат недоступен. Проверьте правила Firebase."));
 }
 
 function leaveChatRoom() {
@@ -166,6 +184,8 @@ function leaveChatRoom() {
   roomMessagesOff = null;
   roomId = null;
   displayName = null;
+  newestMessageId = null;
+  initialSnapshotLoaded = false;
   lastSessionSignature = "";
   setOpen(false);
 }
@@ -177,6 +197,7 @@ function setOpen(nextOpen) {
   document.body.style.overflow = open ? "hidden" : "";
   if (!open) setEmojiOpen(false);
   if (open) {
+    unlockChatAudio();
     markRead();
     window.setTimeout(() => {
       scrollToBottom();
@@ -199,13 +220,12 @@ async function sendMessage(event) {
       createdAt: serverTimestamp()
     });
     ui.input.value = "";
+    ui.input.style.height = "";
     setEmojiOpen(false);
     markRead();
   } catch (error) {
     console.error(error);
-    showError(error?.code?.includes("permission-denied")
-      ? "Firebase пока запрещает отправку. Обновите правила базы."
-      : "Не удалось отправить сообщение.");
+    showError(error?.code?.includes("permission-denied") ? "Firebase запрещает отправку. Проверьте правила базы." : "Не удалось отправить сообщение.");
   } finally {
     ui.send.disabled = false;
   }
@@ -248,6 +268,7 @@ function updateUnread() {
   const unread = messages.filter((message) => message.uid !== user?.uid && Number(message.createdAt || 0) > lastRead).length;
   ui.unread.textContent = unread > 99 ? "99+" : String(unread);
   ui.unread.classList.toggle("has-unread", unread > 0);
+  ui.launcher.classList.toggle("has-unread", unread > 0);
 }
 
 function markRead() {
@@ -256,6 +277,52 @@ function markRead() {
   localStorage.setItem(`${LAST_READ_PREFIX}${roomId}`, String(newest));
   ui.unread.classList.remove("has-unread");
   ui.unread.textContent = "0";
+  ui.launcher.classList.remove("has-unread");
+}
+
+function notifyNewMessage(message) {
+  playChatTone();
+  navigator.vibrate?.([70, 50, 70]);
+  if (open || document.visibilityState === "visible") return;
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  const body = String(message.text || "Новое сообщение").slice(0, 120);
+  navigator.serviceWorker?.ready
+    .then((registration) => registration.showNotification(`Сообщение от ${message.name || "участника"}`, {
+      body,
+      icon: "./icons/icon-192.png",
+      badge: "./icons/icon-192.png",
+      tag: `chat-${roomId}`,
+      renotify: true,
+      data: { url: location.href }
+    }))
+    .catch(() => {});
+}
+
+function unlockChatAudio() {
+  try {
+    audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
+    if (audioContext.state === "suspended") audioContext.resume();
+  } catch {}
+}
+
+function playChatTone() {
+  try {
+    unlockChatAudio();
+    if (!audioContext || audioContext.state !== "running") return;
+    const now = audioContext.currentTime;
+    [760, 980].forEach((frequency, index) => {
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.value = frequency;
+      gain.gain.setValueAtTime(0.0001, now + index * 0.11);
+      gain.gain.exponentialRampToValueAtTime(0.18, now + index * 0.11 + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.11 + 0.095);
+      oscillator.connect(gain).connect(audioContext.destination);
+      oscillator.start(now + index * 0.11);
+      oscillator.stop(now + index * 0.11 + 0.1);
+    });
+  } catch {}
 }
 
 function scrollToBottom() { ui.messages.scrollTop = ui.messages.scrollHeight; }
