@@ -1,4 +1,4 @@
-const CACHE_NAME = "camera-cue-shell-v9";
+const CACHE_NAME = "camera-cue-shell-v10";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -9,6 +9,7 @@ const APP_SHELL = [
   "./app.js",
   "./enhanced-alerts.js",
   "./chat.js",
+  "./turn-config.js",
   "./voice-v2.js",
   "./firebase-config.js",
   "./manifest.webmanifest",
@@ -41,6 +42,7 @@ self.addEventListener("fetch", (event) => {
     url.pathname.endsWith("/app.js") ||
     url.pathname.endsWith("/enhanced-alerts.js") ||
     url.pathname.endsWith("/chat.js") ||
+    url.pathname.endsWith("/turn-config.js") ||
     url.pathname.endsWith("/voice-v2.js") ||
     url.pathname.endsWith("/styles.css") ||
     url.pathname.endsWith("/enhanced-alerts.css") ||
