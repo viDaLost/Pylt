@@ -1,13 +1,15 @@
-const CACHE_NAME = "camera-cue-shell-v6";
+const CACHE_NAME = "camera-cue-shell-v7";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
   "./enhanced-alerts.css",
   "./chat.css",
+  "./voice.css",
   "./app.js",
   "./enhanced-alerts.js",
   "./chat.js",
+  "./voice.js",
   "./firebase-config.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
@@ -39,9 +41,11 @@ self.addEventListener("fetch", (event) => {
     url.pathname.endsWith("/app.js") ||
     url.pathname.endsWith("/enhanced-alerts.js") ||
     url.pathname.endsWith("/chat.js") ||
+    url.pathname.endsWith("/voice.js") ||
     url.pathname.endsWith("/styles.css") ||
     url.pathname.endsWith("/enhanced-alerts.css") ||
-    url.pathname.endsWith("/chat.css")
+    url.pathname.endsWith("/chat.css") ||
+    url.pathname.endsWith("/voice.css")
   ) {
     event.respondWith(networkFirst(request));
     return;
