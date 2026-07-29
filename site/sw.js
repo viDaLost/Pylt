@@ -1,4 +1,4 @@
-const CACHE_NAME = "camera-cue-shell-v5";
+const CACHE_NAME = "camera-cue-shell-v6";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -31,10 +31,8 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET") return;
-
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
-
   if (
     request.mode === "navigate" ||
     url.pathname.endsWith("/firebase-config.js") ||
@@ -48,7 +46,6 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(networkFirst(request));
     return;
   }
-
   event.respondWith(cacheFirst(request));
 });
 
