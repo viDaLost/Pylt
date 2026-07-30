@@ -50,17 +50,17 @@
   "screenshots": [
     {
       "src": "./screenshots/phone.png",
-      "sizes": "390x844",
+      "sizes": "430x932",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Стартовый экран приложения «Кадр» на телефоне"
+      "label": "Полноэкранный стартовый экран приложения «Кадр»"
     },
     {
       "src": "./screenshots/desktop.png",
-      "sizes": "1440x1024",
+      "sizes": "1180x820",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Стартовый экран приложения «Кадр» на большом экране"
+      "label": "Горизонтальный пульт приложения «Кадр»"
     }
   ],
   "shortcuts": [

@@ -80,3 +80,30 @@
     width: 100%;
   }
 }
+
+.is-standalone .volume-panel__header {
+  font-size: 0.8rem;
+}
+
+.is-standalone .volume-panel__row input[type="range"] {
+  height: 32px;
+}
+
+@media (orientation: landscape) and (min-width: 680px) {
+  .is-receiver .volume-panel {
+    grid-template-columns: minmax(76px, 0.42fr) minmax(120px, 1fr);
+    gap: 6px;
+  }
+
+  .is-receiver .volume-panel__header {
+    font-size: 0.7rem;
+  }
+
+  .is-receiver .volume-panel__row {
+    gap: 6px;
+  }
+
+  .is-receiver .volume-panel__row input[type="range"] {
+    height: 28px;
+  }
+}
