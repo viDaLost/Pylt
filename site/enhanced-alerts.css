@@ -1,8 +1,10 @@
 .volume-panel {
   display: grid;
-  gap: 9px;
+  grid-template-columns: minmax(86px, 0.38fr) minmax(140px, 1fr);
+  align-items: center;
+  gap: 8px;
   width: 100%;
-  padding-top: 4px;
+  padding-top: 0;
 }
 
 .volume-panel__header,
@@ -15,7 +17,7 @@
 .volume-panel__header {
   justify-content: space-between;
   color: var(--text-soft);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 
@@ -28,13 +30,13 @@
 
 .volume-panel__row > span {
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.7rem;
 }
 
 .volume-panel__row input[type="range"] {
   flex: 1;
   min-width: 0;
-  height: 30px;
+  height: 26px;
   margin: 0;
   accent-color: var(--accent);
   cursor: pointer;

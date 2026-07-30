@@ -22,7 +22,7 @@ const el = {
   joinRoomButton: $("joinRoomButton"), activePersonName: $("activePersonName"), participantSummary: $("participantSummary"),
   activeSignal: $("activeSignal"), shareRoomButton: $("shareRoomButton"), clearActiveButton: $("clearActiveButton"),
   receiverCount: $("receiverCount"), participantsList: $("participantsList"), emptyParticipants: $("emptyParticipants"),
-  participantSearchInput: $("participantSearchInput"), controllerRoomCode: $("controllerRoomCode"),
+  participantSearchInput: $("participantSearchInput"),
   finishRoomButton: $("finishRoomButton"), receiverSignal: $("receiverSignal"), receiverKicker: $("receiverKicker"),
   receiverStatusText: $("receiverStatusText"), receiverSubtext: $("receiverSubtext"), receiverOwnName: $("receiverOwnName"),
   enableAlertsButton: $("enableAlertsButton"), enableAlertsLabel: $("enableAlertsLabel"), alertsStatus: $("alertsStatus"),
@@ -75,7 +75,6 @@ function bindUi() {
   el.joinRoomButton.addEventListener("click", joinRoom);
   el.shareRoomButton.addEventListener("click", shareRoom);
   el.roomCodeButton.addEventListener("click", copyRoomCode);
-  el.controllerRoomCode.addEventListener("click", copyRoomCode);
   document.querySelectorAll("[data-share-room]").forEach((button) => button.addEventListener("click", shareRoom));
   el.clearActiveButton.addEventListener("click", () => chooseParticipant(null));
   el.finishRoomButton.addEventListener("click", finishRoom);
@@ -172,7 +171,6 @@ async function enterRoom(roomId, role, name) {
   saveSession({ roomId, role, name });
   showRoom(role);
   el.roomCodeText.textContent = roomId;
-  el.controllerRoomCode.querySelector("span").textContent = roomId;
   el.receiverOwnName.textContent = name;
   if (role === "receiver") renderAlertsState();
   await setPresence(true);
@@ -236,6 +234,7 @@ function renderController() {
   el.activeSignal.classList.toggle("mini-signal--green", Boolean(active));
   el.activeSignal.classList.toggle("mini-signal--red", !active);
   el.activeSignal.setAttribute("aria-label", active ? `Зелёный сигнал: в кадре ${active.name}` : "Красный сигнал: никто не выбран");
+  el.clearActiveButton.disabled = !active;
   el.participantsList.replaceChildren();
   el.emptyParticipants.classList.toggle("hidden", filteredReceivers.length > 0);
 
@@ -328,20 +327,20 @@ async function enableAlerts() {
 
 function renderAlertsState(permission = ("Notification" in window ? Notification.permission : "unsupported")) {
   if (!state.alertsEnabled) {
-    el.enableAlertsLabel.textContent = state.alertsPreferred ? "Включить оповещения снова" : "Включить звук и уведомления";
+    el.enableAlertsLabel.textContent = state.alertsPreferred ? "Включить снова" : "Включить оповещения";
     el.enableAlertsButton.classList.remove("is-enabled");
-    el.alertsStatus.textContent = "Нажмите один раз перед съёмкой. На iPhone установите приложение на экран «Домой».";
+    el.alertsStatus.textContent = "Нажмите один раз перед съёмкой.";
     return;
   }
 
   el.enableAlertsLabel.textContent = "Оповещения включены";
   el.enableAlertsButton.classList.add("is-enabled");
   if (permission === "granted") {
-    el.alertsStatus.textContent = "Звук включён. При свёрнутом приложении также появится системное уведомление.";
+    el.alertsStatus.textContent = "Звук и системные уведомления работают.";
   } else if (permission === "denied") {
-    el.alertsStatus.textContent = "Звук включён, но системные уведомления запрещены в настройках телефона.";
+    el.alertsStatus.textContent = "Звук работает, уведомления запрещены.";
   } else {
-    el.alertsStatus.textContent = "Звук включён. Системные уведомления недоступны в этом режиме браузера.";
+    el.alertsStatus.textContent = "Звук работает в открытом приложении.";
   }
 }
 
