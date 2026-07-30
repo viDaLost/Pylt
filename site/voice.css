@@ -218,3 +218,83 @@
     max-width: calc(34vw - 20px);
   }
 }
+
+.is-standalone .voice-dock {
+  min-height: 58px;
+  border-radius: 18px;
+  padding: 6px;
+}
+
+.is-standalone .voice-join,
+.is-standalone .voice-ptt,
+.is-standalone .voice-mute {
+  min-height: 46px;
+  border-radius: 13px;
+  font-size: 0.82rem;
+}
+
+.is-standalone .voice-mute {
+  width: 46px;
+}
+
+@media (orientation: landscape) and (min-width: 680px) {
+  .is-controller .voice-dock,
+  .is-receiver .voice-dock {
+    flex: 1 1 auto;
+    min-height: 52px;
+    border-radius: 16px;
+    padding: 5px;
+  }
+
+  .is-controller .voice-join,
+  .is-controller .voice-ptt,
+  .is-controller .voice-mute,
+  .is-receiver .voice-join,
+  .is-receiver .voice-ptt,
+  .is-receiver .voice-mute {
+    min-height: 42px;
+    border-radius: 12px;
+    font-size: 0.76rem;
+  }
+
+  .is-controller .voice-join,
+  .is-controller .voice-ptt,
+  .is-receiver .voice-join,
+  .is-receiver .voice-ptt {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .is-controller .voice-mute,
+  .is-receiver .voice-mute {
+    width: 42px;
+  }
+
+  .is-controller .voice-status {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: calc(66px + env(safe-area-inset-bottom));
+    max-width: min(520px, 58vw);
+  }
+
+  .is-receiver .voice-status {
+    right: max(10px, env(safe-area-inset-right));
+    bottom: calc(64px + env(safe-area-inset-bottom));
+    max-width: calc(clamp(270px, 32vw, 430px) - 20px);
+  }
+}
+
+@media (orientation: landscape) and (min-width: 680px) and (max-height: 460px) {
+  .is-controller .voice-dock,
+  .is-receiver .voice-dock {
+    min-height: 48px;
+  }
+
+  .is-controller .voice-join,
+  .is-controller .voice-ptt,
+  .is-controller .voice-mute,
+  .is-receiver .voice-join,
+  .is-receiver .voice-ptt,
+  .is-receiver .voice-mute {
+    min-height: 38px;
+  }
+}

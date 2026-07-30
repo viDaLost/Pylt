@@ -33,6 +33,20 @@ const el = {
   confirmDialogAccept: $("confirmDialogAccept"), toastRegion: $("toastRegion")
 };
 
+const standaloneDisplayQuery = window.matchMedia("(display-mode: standalone)");
+const isStandaloneDisplay = () => standaloneDisplayQuery.matches || navigator.standalone === true;
+
+function syncDisplayMode() {
+  document.body.classList.toggle("is-standalone", isStandaloneDisplay());
+}
+
+syncDisplayMode();
+if (typeof standaloneDisplayQuery.addEventListener === "function") {
+  standaloneDisplayQuery.addEventListener("change", syncDisplayMode);
+} else {
+  standaloneDisplayQuery.addListener?.(syncDisplayMode);
+}
+
 const state = {
   app: null, auth: null, db: null, user: null, roomId: null, role: null, name: null,
   room: null, connected: false, roomOff: null, connectionOff: null, disconnectOp: null,
@@ -655,7 +669,7 @@ function setupInstallExperience() {
 }
 
 function renderInstallState(justInstalled = false) {
-  const standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true || justInstalled;
+  const standalone = isStandaloneDisplay() || justInstalled;
   el.installAppPanel.classList.toggle("is-installed", standalone);
   if (standalone) {
     el.installAppButton.textContent = "Установлено";
