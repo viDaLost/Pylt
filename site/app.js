@@ -29,6 +29,7 @@ const el = {
   leaveRoomButton: $("leaveRoomButton"), backToStartButton: $("backToStartButton"),
   installAppPanel: $("installAppPanel"), installAppButton: $("installAppButton"), installAppStatus: $("installAppStatus"),
   installDialog: $("installDialog"), installDialogTitle: $("installDialogTitle"), installInstructions: $("installInstructions"),
+  installIosTab: $("installIosTab"), installAndroidTab: $("installAndroidTab"), installHelp: $("installHelp"),
   confirmDialog: $("confirmDialog"), confirmDialogTitle: $("confirmDialogTitle"), confirmDialogText: $("confirmDialogText"),
   confirmDialogAccept: $("confirmDialogAccept"), toastRegion: $("toastRegion")
 };
@@ -98,6 +99,9 @@ function bindUi() {
   el.resumeButton.addEventListener("click", resumeSession);
   el.forgetSessionButton.addEventListener("click", forgetSession);
   el.installAppButton.addEventListener("click", installApp);
+  el.installIosTab.addEventListener("click", () => renderInstallInstructions("ios"));
+  el.installAndroidTab.addEventListener("click", () => renderInstallInstructions("android"));
+  [el.installIosTab, el.installAndroidTab].forEach((tab) => tab.addEventListener("keydown", handleInstallTabKeys));
   el.participantSearchInput.addEventListener("input", () => {
     state.participantFilter = el.participantSearchInput.value.trim().toLocaleLowerCase("ru");
     if (state.room) renderController();
@@ -678,10 +682,17 @@ function renderInstallState(justInstalled = false) {
     return;
   }
   el.installAppButton.disabled = false;
-  el.installAppButton.textContent = state.installPrompt ? "Установить" : "Инструкция";
-  el.installAppStatus.textContent = state.installPrompt
-    ? "Готово к установке — это займёт несколько секунд."
-    : "Открывайте с главного экрана без панели браузера.";
+  el.installAppButton.textContent = state.installPrompt ? "Установить" : "Как установить";
+  if (state.installPrompt) {
+    el.installAppStatus.textContent = "Готово к установке — это займёт несколько секунд.";
+    return;
+  }
+  const platform = detectInstallPlatform();
+  el.installAppStatus.textContent = platform === "ios"
+    ? "Safari → Поделиться → На экран «Домой»."
+    : platform === "android"
+      ? "Chrome → ⋮ → Установить приложение."
+      : "Инструкции для iPhone, iPad и Android.";
 }
 
 async function installApp() {
@@ -695,29 +706,50 @@ async function installApp() {
     return;
   }
 
-  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isAndroid = /android/i.test(navigator.userAgent);
-  el.installDialogTitle.textContent = isIos
-    ? "Добавьте «Кадр» на экран «Домой»"
-    : "Добавьте «Кадр» на главный экран";
+  renderInstallInstructions(detectInstallPlatform() === "ios" ? "ios" : "android");
+  if (el.installDialog.open) el.installDialog.close("cancel");
+  el.installDialog.showModal();
+}
 
+function detectInstallPlatform() {
+  const userAgent = navigator.userAgent || "";
+  const isIpadOs = /Macintosh/i.test(userAgent) && navigator.maxTouchPoints > 1;
+  if (/iphone|ipad|ipod/i.test(userAgent) || isIpadOs) return "ios";
+  if (/android/i.test(userAgent)) return "android";
+  return "other";
+}
+
+function renderInstallInstructions(platform) {
+  const isIos = platform === "ios";
+  const activeTab = isIos ? el.installIosTab : el.installAndroidTab;
+  const inactiveTab = isIos ? el.installAndroidTab : el.installIosTab;
   const steps = isIos
     ? [
-        "Откройте эту страницу в Safari.",
-        "Нажмите кнопку «Поделиться» в панели браузера.",
-        "Выберите «На экран Домой», затем нажмите «Добавить»."
+        "Откройте «Кадр» именно в Safari.",
+        "Нажмите «Поделиться» — квадрат со стрелкой вверх. Если кнопки нет, откройте меню •••.",
+        "Прокрутите список и выберите «На экран Домой».",
+        "Включите «Открывать как веб-приложение», затем нажмите «Добавить»."
       ]
-    : isAndroid
-      ? [
-          "Откройте меню браузера ⋮.",
-          "Выберите «Установить приложение» или «Добавить на главный экран».",
-          "Подтвердите установку — ярлык появится рядом с приложениями."
-        ]
-      : [
-          "Откройте меню браузера.",
-          "Найдите пункт «Установить Кадр» или значок установки в адресной строке.",
-          "Подтвердите установку приложения."
-        ];
+    : [
+        "Откройте «Кадр» именно в Google Chrome.",
+        "Нажмите меню ⋮ в правом верхнем углу.",
+        "Выберите «Установить приложение» или «Добавить на главный экран».",
+        "Нажмите «Установить» — значок «Кадра» появится на главном экране."
+      ];
+
+  el.installDialogTitle.textContent = isIos
+    ? "Установка на iPhone или iPad"
+    : "Установка на Android";
+  activeTab.classList.add("is-active");
+  activeTab.setAttribute("aria-selected", "true");
+  activeTab.tabIndex = 0;
+  inactiveTab.classList.remove("is-active");
+  inactiveTab.setAttribute("aria-selected", "false");
+  inactiveTab.tabIndex = -1;
+  el.installInstructions.setAttribute("aria-labelledby", activeTab.id);
+  el.installHelp.textContent = isIos
+    ? "Не видите пункт? Прокрутите меню вниз и добавьте его через «Изменить действия». Встроенный браузер мессенджера сначала закройте и откройте ссылку в Safari."
+    : "Не видите пункт? Откройте ссылку непосредственно в Chrome, а не во встроенном браузере Telegram, WhatsApp или другого приложения.";
 
   el.installInstructions.replaceChildren(...steps.map((text, index) => {
     const item = document.createElement("div");
@@ -729,7 +761,14 @@ async function installApp() {
     item.append(number, paragraph);
     return item;
   }));
-  el.installDialog.showModal();
+}
+
+function handleInstallTabKeys(event) {
+  if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+  event.preventDefault();
+  const platform = event.currentTarget === el.installIosTab ? "android" : "ios";
+  renderInstallInstructions(platform);
+  (platform === "ios" ? el.installIosTab : el.installAndroidTab).focus();
 }
 
 function messageFor(error) {

@@ -17,10 +17,10 @@
   <link rel="icon" type="image/svg+xml" href="./icons/app-icon.svg">
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="./styles.css?v=13">
-  <link rel="stylesheet" href="./enhanced-alerts.css?v=13">
-  <link rel="stylesheet" href="./chat.css?v=13">
-  <link rel="stylesheet" href="./voice.css?v=13">
+  <link rel="stylesheet" href="./styles.css?v=14">
+  <link rel="stylesheet" href="./enhanced-alerts.css?v=14">
+  <link rel="stylesheet" href="./chat.css?v=14">
+  <link rel="stylesheet" href="./voice.css?v=14">
 </head>
 <body>
   <a class="skip-link" href="#mainContent">К основному содержимому</a>
@@ -306,7 +306,17 @@
       </span>
       <p class="eyebrow">Установка приложения</p>
       <h2 id="installDialogTitle">Добавьте «Кадр» на главный экран</h2>
-      <div id="installInstructions" class="install-steps"></div>
+      <p class="install-dialog__lead">Выберите устройство — установка займёт меньше минуты.</p>
+      <div class="install-platform-tabs" role="tablist" aria-label="Выберите устройство">
+        <button id="installIosTab" class="install-platform-tab" type="button" role="tab" aria-selected="false" aria-controls="installInstructions">
+          iPhone / iPad
+        </button>
+        <button id="installAndroidTab" class="install-platform-tab" type="button" role="tab" aria-selected="false" aria-controls="installInstructions">
+          Android
+        </button>
+      </div>
+      <div id="installInstructions" class="install-steps" role="tabpanel"></div>
+      <p id="installHelp" class="install-help"></p>
       <button class="button button--primary button--large" type="submit" value="cancel">Понятно</button>
     </form>
   </dialog>
@@ -326,10 +336,10 @@
     </form>
   </dialog>
 
-  <script type="module" src="./app.js?v=13"></script>
-  <script type="module" src="./enhanced-alerts.js?v=13"></script>
-  <script type="module" src="./chat.js?v=13"></script>
-  <script type="module" src="./turn-config.js?v=13"></script>
-  <script type="module" src="./voice-v2.js?v=13"></script>
+  <script type="module" src="./app.js?v=14"></script>
+  <script type="module" src="./enhanced-alerts.js?v=14"></script>
+  <script type="module" src="./chat.js?v=14"></script>
+  <script type="module" src="./turn-config.js?v=14"></script>
+  <script type="module" src="./voice-v2.js?v=14"></script>
 </body>
 </html>
