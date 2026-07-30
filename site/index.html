@@ -1,159 +1,397 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b0d12">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta id="themeColorMeta" name="theme-color" content="#080b0d">
   <meta name="color-scheme" content="dark">
-  <meta name="description" content="Мобильный пульт сигналов для съёмочной группы: кто сейчас в кадре.">
-  <title>Кадр-Сигнал</title>
+  <meta name="description" content="Кадр — профессиональный мобильный пульт сигналов, чат и рация для съёмочной группы.">
+  <meta name="application-name" content="Кадр">
+  <meta name="apple-mobile-web-app-title" content="Кадр">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <title>Кадр — пульт съёмочной группы</title>
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icons/icon-192.png">
-  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="icon" type="image/svg+xml" href="./icons/app-icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./enhanced-alerts.css">
   <link rel="stylesheet" href="./chat.css">
   <link rel="stylesheet" href="./voice.css">
 </head>
 <body>
-  <noscript>Для работы приложения необходимо включить JavaScript.</noscript>
+  <a class="skip-link" href="#mainContent">К основному содержимому</a>
+  <noscript>
+    <div class="noscript-message">Для работы «Кадра» необходимо включить JavaScript.</div>
+  </noscript>
 
   <div id="app" class="app-shell">
+    <div class="ambient ambient--one" aria-hidden="true"></div>
+    <div class="ambient ambient--two" aria-hidden="true"></div>
+
     <header id="topbar" class="topbar hidden">
-      <div class="topbar__left">
-        <span id="connectionDot" class="connection-dot" aria-hidden="true"></span>
-        <span id="connectionText">Подключение…</span>
+      <div class="topbar__inner">
+        <div class="topbar__brand">
+          <span class="brand-symbol brand-symbol--small" aria-hidden="true">
+            <span class="brand-symbol__core"></span>
+          </span>
+          <span class="topbar__wordmark">КАДР</span>
+        </div>
+
+        <div class="topbar__right">
+          <div class="connection-pill" role="status" aria-live="polite">
+            <span id="connectionDot" class="connection-dot" aria-hidden="true"></span>
+            <span id="connectionText">Подключение…</span>
+          </div>
+          <button id="roomCodeButton" class="room-code" type="button" title="Скопировать код комнаты" aria-label="Скопировать код комнаты">
+            <span class="room-code__label">Комната</span>
+            <strong id="roomCodeText">—</strong>
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 8V5.8A1.8 1.8 0 0 1 9.8 4h8.4A1.8 1.8 0 0 1 20 5.8v8.4a1.8 1.8 0 0 1-1.8 1.8H16M5.8 8h8.4A1.8 1.8 0 0 1 16 9.8v8.4a1.8 1.8 0 0 1-1.8 1.8H5.8A1.8 1.8 0 0 1 4 18.2V9.8A1.8 1.8 0 0 1 5.8 8Z"/></svg>
+          </button>
+        </div>
       </div>
-      <button id="roomCodeButton" class="room-code" type="button" title="Скопировать код комнаты">
-        Комната <strong id="roomCodeText">—</strong>
-      </button>
     </header>
 
-    <main>
+    <main id="mainContent">
       <section id="setupView" class="setup-view">
-        <div class="brand">
-          <div class="brand__mark" aria-hidden="true">●</div>
-          <div>
-            <p class="eyebrow">Пульт съёмочной группы</p>
-            <h1>Кадр-Сигнал</h1>
+        <div class="setup-stage">
+          <div class="setup-intro">
+            <div class="brand">
+              <span class="brand-symbol" aria-hidden="true">
+                <span class="brand-symbol__core"></span>
+              </span>
+              <div>
+                <p class="eyebrow">Production cue system</p>
+                <p class="brand__name">КАДР</p>
+              </div>
+            </div>
+
+            <div class="setup-copy">
+              <p class="setup-copy__label"><span></span> Съёмочная группа на одной волне</p>
+              <h1>Сигнал, который<br><em>видят все.</em></h1>
+              <p class="setup-copy__lead">Управляйте вниманием команды, общайтесь в чате и по рации — прямо со смартфона, без лишнего оборудования.</p>
+            </div>
+
+            <div class="signal-preview" aria-hidden="true">
+              <div class="signal-preview__chrome">
+                <span>LIVE CUE</span>
+                <span>01:24:08</span>
+              </div>
+              <div class="signal-preview__center">
+                <span class="signal-preview__rings"></span>
+                <span class="signal-preview__light"></span>
+              </div>
+              <div class="signal-preview__footer">
+                <span>СИНХРОНИЗАЦИЯ</span>
+                <strong>ГОТОВО</strong>
+              </div>
+            </div>
+
+            <ul class="feature-strip" aria-label="Возможности приложения">
+              <li class="feature-item">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.64 5.64l2.12 2.12m8.48 8.48 2.12 2.12m0-12.72-2.12 2.12M7.76 16.24l-2.12 2.12"/><circle cx="12" cy="12" r="3.25"/></svg>
+                <span><strong>Мгновенный сигнал</strong><small>Кто сейчас в кадре</small></span>
+              </li>
+              <li class="feature-item">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 11V7a4 4 0 0 1 8 0v4a4 4 0 0 1-8 0Z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3m-3 0h6"/></svg>
+                <span><strong>Рация и чат</strong><small>Связь без переключений</small></span>
+              </li>
+              <li class="feature-item">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 18.5h4"/></svg>
+                <span><strong>Всегда под рукой</strong><small>Устанавливается как приложение</small></span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="setup-workspace">
+            <div id="configWarning" class="notice notice--warning hidden" role="alert">
+              <span class="notice__icon" aria-hidden="true">!</span>
+              <span>
+                <strong>Сначала подключите Firebase</strong>
+                <small>Откройте <code>site/firebase-config.js</code> и добавьте настройки проекта.</small>
+              </span>
+            </div>
+
+            <div id="errorBox" class="notice notice--error hidden" role="alert"></div>
+
+            <div id="resumeCard" class="card resume-card hidden">
+              <div class="card-kicker">
+                <span class="status-mark status-mark--green" aria-hidden="true"></span>
+                Сохранённая сессия
+              </div>
+              <h2 id="resumeTitle">Продолжить работу</h2>
+              <p id="resumeDescription" class="muted"></p>
+              <div class="button-row">
+                <button id="resumeButton" class="button button--primary" type="button">
+                  Продолжить
+                  <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+                <button id="forgetSessionButton" class="button button--ghost" type="button">Забыть</button>
+              </div>
+            </div>
+
+            <div class="workspace-heading">
+              <p class="eyebrow">Начало работы</p>
+              <h2>Выберите свою роль</h2>
+              <p class="muted">Один телефон становится пультом, остальные — приёмниками сигнала.</p>
+            </div>
+
+            <div class="role-switch" role="tablist" aria-label="Выберите режим">
+              <button id="controllerTab" class="role-switch__button is-active" type="button" role="tab" aria-selected="true" aria-controls="controllerSetup">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 9h4m-4 3h7m4-3v3"/></svg>
+                <span><strong>Пульт</strong><small>Управляю съёмкой</small></span>
+              </button>
+              <button id="receiverTab" class="role-switch__button" type="button" role="tab" aria-selected="false" aria-controls="receiverSetup">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 18.5h4"/></svg>
+                <span><strong>Приёмник</strong><small>Получаю сигнал</small></span>
+              </button>
+            </div>
+
+            <div id="controllerSetup" class="card setup-card" role="tabpanel" aria-labelledby="controllerTab">
+              <div class="setup-card__heading">
+                <span class="step-number">01</span>
+                <div>
+                  <p class="eyebrow">Новая съёмка</p>
+                  <h2>Создать комнату</h2>
+                </div>
+              </div>
+              <p class="muted">Вы получите код и ссылку для команды. На пульте появятся все подключённые участники.</p>
+              <label class="field">
+                <span>Имя управляющего</span>
+                <span class="input-shell">
+                  <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>
+                  <input id="controllerNameInput" type="text" maxlength="40" autocomplete="name" value="Режиссёр" placeholder="Например: Режиссёр">
+                </span>
+              </label>
+              <button id="createRoomButton" class="button button--primary button--large" type="button">
+                Создать комнату
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+
+            <div id="receiverSetup" class="card setup-card hidden" role="tabpanel" aria-labelledby="receiverTab">
+              <div class="setup-card__heading">
+                <span class="step-number">02</span>
+                <div>
+                  <p class="eyebrow">Подключение к группе</p>
+                  <h2>Войти по коду</h2>
+                </div>
+              </div>
+              <p class="muted">Введите шестизначный код с пульта. Если вы открыли приглашение, код уже заполнен.</p>
+              <div class="field-grid">
+                <label class="field">
+                  <span>Код комнаты</span>
+                  <span class="input-shell input-shell--code">
+                    <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 8V5.8A1.8 1.8 0 0 1 9.8 4h8.4A1.8 1.8 0 0 1 20 5.8v8.4a1.8 1.8 0 0 1-1.8 1.8H16"/><rect x="4" y="8" width="12" height="12" rx="2"/></svg>
+                    <input id="roomInput" class="room-input" type="text" maxlength="12" inputmode="text" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="ABC123">
+                  </span>
+                </label>
+                <label class="field">
+                  <span>Ваше имя</span>
+                  <span class="input-shell">
+                    <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>
+                    <input id="receiverNameInput" type="text" maxlength="40" autocomplete="name" placeholder="Например: Анна">
+                  </span>
+                </label>
+              </div>
+              <button id="joinRoomButton" class="button button--primary button--large" type="button">
+                Подключиться к съёмке
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+
+            <aside id="installAppPanel" class="install-card" aria-label="Установка приложения">
+              <span class="install-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 6v7m-3-3 3 3 3-3m-5 7.5h4"/></svg>
+              </span>
+              <span class="install-card__copy">
+                <strong>Установите «Кадр»</strong>
+                <small id="installAppStatus">Открывайте с главного экрана без панели браузера.</small>
+              </span>
+              <button id="installAppButton" class="button button--compact" type="button">Установить</button>
+            </aside>
+
+            <p class="setup-note">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"/><path d="M12 10v6m0-9v.01"/></svg>
+              Для синхронизации нужен интернет. Устройства могут быть подключены к одной Wi‑Fi-сети.
+            </p>
           </div>
         </div>
-
-        <div id="configWarning" class="notice notice--warning hidden" role="alert">
-          <strong>Сначала подключите Firebase.</strong>
-          <span>Откройте файл <code>site/firebase-config.js</code> и вставьте настройки своего проекта.</span>
-        </div>
-
-        <div id="errorBox" class="notice notice--error hidden" role="alert"></div>
-
-        <div id="resumeCard" class="card resume-card hidden">
-          <p class="eyebrow">Сохранённая сессия</p>
-          <h2 id="resumeTitle">Продолжить работу</h2>
-          <p id="resumeDescription" class="muted"></p>
-          <div class="button-row">
-            <button id="resumeButton" class="button button--primary" type="button">Продолжить</button>
-            <button id="forgetSessionButton" class="button button--ghost" type="button">Забыть</button>
-          </div>
-        </div>
-
-        <div class="role-switch" role="tablist" aria-label="Выберите режим">
-          <button id="controllerTab" class="role-switch__button is-active" type="button" role="tab" aria-selected="true">Пульт</button>
-          <button id="receiverTab" class="role-switch__button" type="button" role="tab" aria-selected="false">Приёмник</button>
-        </div>
-
-        <div id="controllerSetup" class="card setup-card">
-          <p class="eyebrow">Управляющее устройство</p>
-          <h2>Создать комнату</h2>
-          <p class="muted">На этом телефоне будет список участников и кнопки выбора человека в кадре.</p>
-          <label class="field">
-            <span>Имя управляющего</span>
-            <input id="controllerNameInput" type="text" maxlength="40" autocomplete="name" value="Режиссёр" placeholder="Например: Режиссёр">
-          </label>
-          <button id="createRoomButton" class="button button--primary button--large" type="button">Создать комнату</button>
-        </div>
-
-        <div id="receiverSetup" class="card setup-card hidden">
-          <p class="eyebrow">Устройство участника</p>
-          <h2>Подключиться</h2>
-          <p class="muted">Введите код с экрана пульта или откройте ссылку, которую прислал управляющий.</p>
-          <label class="field">
-            <span>Код комнаты</span>
-            <input id="roomInput" class="room-input" type="text" maxlength="6" inputmode="text" autocapitalize="characters" autocomplete="off" placeholder="ABC123">
-          </label>
-          <label class="field">
-            <span>Ваше имя</span>
-            <input id="receiverNameInput" type="text" maxlength="40" autocomplete="name" placeholder="Например: Анна">
-          </label>
-          <button id="joinRoomButton" class="button button--primary button--large" type="button">Подключиться</button>
-        </div>
-
-        <p class="setup-note">Для синхронизации этой версии нужен интернет. Все телефоны могут работать через одну общую Wi‑Fi‑сеть.</p>
       </section>
 
       <section id="controllerView" class="controller-view hidden">
-        <div class="controller-hero card">
-          <div>
-            <p class="eyebrow">Сейчас в кадре</p>
-            <h2 id="activePersonName">Никто</h2>
-            <p id="participantSummary" class="muted">Ожидание участников…</p>
+        <div class="controller-layout">
+          <div class="controller-main">
+            <article class="controller-hero card">
+              <div class="controller-hero__copy">
+                <div class="card-kicker"><span class="live-dot" aria-hidden="true"></span> Текущий сигнал</div>
+                <p class="controller-hero__label">Сейчас в кадре</p>
+                <h1 id="activePersonName">Никто</h1>
+                <p id="participantSummary" class="muted">Ожидание участников…</p>
+              </div>
+              <div class="signal-orbit">
+                <div id="activeSignal" class="mini-signal mini-signal--red" role="img" aria-label="Красный сигнал">
+                  <span aria-hidden="true"></span>
+                </div>
+              </div>
+            </article>
+
+            <div class="controller-actions">
+              <button id="shareRoomButton" class="button button--secondary" type="button">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"/></svg>
+                Пригласить команду
+              </button>
+              <button id="clearActiveButton" class="button button--danger" type="button">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></svg>
+                Снять сигнал
+              </button>
+            </div>
+
+            <div class="participants-heading">
+              <div>
+                <p class="eyebrow">Устройства в комнате</p>
+                <div class="section-title-row">
+                  <h2>Участники</h2>
+                  <span id="receiverCount" class="counter">0</span>
+                </div>
+              </div>
+              <label class="search-field">
+                <span class="sr-only">Найти участника</span>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+                <input id="participantSearchInput" type="search" autocomplete="off" placeholder="Найти участника">
+              </label>
+            </div>
+
+            <div id="participantsList" class="participants-list"></div>
+            <div id="emptyParticipants" class="empty-state card">
+              <div class="empty-state__visual" aria-hidden="true">
+                <span></span><span></span><span></span>
+              </div>
+              <h3>Ждём команду</h3>
+              <p>Поделитесь ссылкой — новые участники сразу появятся в этом списке.</p>
+              <button class="button button--ghost empty-state__share" type="button" data-share-room>Поделиться приглашением</button>
+            </div>
           </div>
-          <div id="activeSignal" class="mini-signal mini-signal--red" aria-label="Красный сигнал"></div>
-        </div>
 
-        <div class="controller-actions">
-          <button id="shareRoomButton" class="button button--secondary" type="button">Поделиться ссылкой</button>
-          <button id="clearActiveButton" class="button button--danger" type="button">Никто не в кадре</button>
-        </div>
+          <aside class="controller-sidebar" aria-label="Инструменты комнаты">
+            <div class="card room-panel">
+              <p class="eyebrow">Активная комната</p>
+              <button id="controllerRoomCode" class="room-panel__code" type="button" aria-label="Скопировать код комнаты">
+                <span>—</span>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 8V5.8A1.8 1.8 0 0 1 9.8 4h8.4A1.8 1.8 0 0 1 20 5.8v8.4a1.8 1.8 0 0 1-1.8 1.8H16"/><rect x="4" y="8" width="12" height="12" rx="2"/></svg>
+              </button>
+              <p class="room-panel__hint">Покажите код участникам или отправьте ссылку.</p>
+              <button class="button button--secondary button--full" type="button" data-share-room>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 12h8m-4-4 4 4-4 4"/><rect x="3" y="4" width="18" height="16" rx="3"/></svg>
+                Отправить ссылку
+              </button>
+            </div>
 
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Подключённые устройства</p>
-            <h2>Участники</h2>
-          </div>
-          <span id="receiverCount" class="counter">0</span>
-        </div>
+            <div class="card set-checklist">
+              <p class="eyebrow">Перед мотором</p>
+              <h3>Быстрая проверка</h3>
+              <ul>
+                <li><span>1</span><p><strong>Подключите команду</strong><small>Проверьте зелёный статус устройств</small></p></li>
+                <li><span>2</span><p><strong>Включите оповещения</strong><small>Участники услышат смену сигнала</small></p></li>
+                <li><span>3</span><p><strong>Протестируйте рацию</strong><small>Разрешите доступ к микрофону</small></p></li>
+              </ul>
+            </div>
 
-        <div id="participantsList" class="participants-list"></div>
-        <div id="emptyParticipants" class="empty-state card">
-          <div class="empty-state__signal" aria-hidden="true"></div>
-          <h3>Пока никто не подключился</h3>
-          <p>Нажмите «Поделиться ссылкой» и отправьте её участникам съёмки.</p>
+            <button id="finishRoomButton" class="button button--destructive button--full" type="button">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></svg>
+              Завершить комнату
+            </button>
+          </aside>
         </div>
-
-        <button id="finishRoomButton" class="button button--ghost button--full" type="button">Завершить комнату</button>
       </section>
 
       <section id="receiverView" class="receiver-view hidden" aria-live="polite">
         <div id="receiverSignal" class="receiver-signal receiver-signal--red">
+          <div class="receiver-signal__grid" aria-hidden="true"></div>
           <div class="receiver-signal__content">
-            <p id="receiverKicker" class="receiver-signal__kicker">ОЖИДАНИЕ КОМАНДЫ</p>
+            <div class="receiver-signal__badge">
+              <span aria-hidden="true"></span>
+              <p id="receiverKicker" class="receiver-signal__kicker">ОЖИДАНИЕ КОМАНДЫ</p>
+            </div>
             <h1 id="receiverStatusText">НЕ В КАДРЕ</h1>
             <p id="receiverSubtext">Сейчас никто не выбран</p>
           </div>
+          <div class="receiver-signal__corners" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+          </div>
         </div>
+
         <div class="receiver-footer">
           <div class="alert-controls">
-            <button id="enableAlertsButton" class="button button--alert" type="button">Включить звук и уведомления</button>
+            <button id="enableAlertsButton" class="button button--alert" type="button">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+              <span id="enableAlertsLabel">Включить звук и уведомления</span>
+            </button>
             <span id="alertsStatus" class="alert-controls__status">Нажмите один раз перед съёмкой. На iPhone установите приложение на экран «Домой».</span>
           </div>
           <div class="receiver-footer__identity">
             <span class="muted">Вы подключены как</span>
             <strong id="receiverOwnName">—</strong>
           </div>
-          <button id="leaveRoomButton" class="button button--ghost" type="button">Выйти</button>
+          <button id="leaveRoomButton" class="button button--ghost" type="button">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10 5H5v14h5m5-4 4-3-4-3m4 3H9"/></svg>
+            Выйти
+          </button>
         </div>
       </section>
 
       <section id="endedView" class="ended-view hidden">
         <div class="card ended-card">
-          <div class="ended-card__icon" aria-hidden="true">■</div>
+          <span class="ended-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3"/></svg>
+          </span>
+          <p class="eyebrow">Сессия окончена</p>
           <h2>Комната завершена</h2>
-          <p class="muted">Управляющий закрыл сессию или комната больше не существует.</p>
-          <button id="backToStartButton" class="button button--primary" type="button">На главный экран</button>
+          <p class="muted">Управляющий закрыл съёмку или эта комната больше не существует.</p>
+          <button id="backToStartButton" class="button button--primary button--large" type="button">
+            На главный экран
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
         </div>
       </section>
     </main>
   </div>
+
+  <aside id="communicationDock" class="communication-dock" aria-label="Связь со съёмочной группой"></aside>
+  <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+  <dialog id="installDialog" class="app-dialog">
+    <form method="dialog">
+      <button class="dialog-close" type="submit" value="cancel" aria-label="Закрыть">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M5 5 19 19M19 5 5 19"/></svg>
+      </button>
+      <span class="dialog-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 6v7m-3-3 3 3 3-3m-2 7.5h4"/></svg>
+      </span>
+      <p class="eyebrow">Установка приложения</p>
+      <h2 id="installDialogTitle">Добавьте «Кадр» на главный экран</h2>
+      <div id="installInstructions" class="install-steps"></div>
+      <button class="button button--primary button--large" type="submit" value="cancel">Понятно</button>
+    </form>
+  </dialog>
+
+  <dialog id="confirmDialog" class="app-dialog app-dialog--confirm">
+    <form method="dialog">
+      <span class="dialog-icon dialog-icon--danger" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5m0 3v.01"/></svg>
+      </span>
+      <p class="eyebrow">Подтвердите действие</p>
+      <h2 id="confirmDialogTitle">Вы уверены?</h2>
+      <p id="confirmDialogText" class="muted"></p>
+      <div class="button-row">
+        <button id="confirmDialogCancel" class="button button--ghost" type="submit" value="cancel">Отмена</button>
+        <button id="confirmDialogAccept" class="button button--destructive" type="submit" value="confirm">Подтвердить</button>
+      </div>
+    </form>
+  </dialog>
 
   <script type="module" src="./app.js"></script>
   <script type="module" src="./enhanced-alerts.js"></script>

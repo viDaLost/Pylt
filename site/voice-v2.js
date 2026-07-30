@@ -37,6 +37,7 @@ const peers = new Map();
 if (auth && db && navigator.mediaDevices?.getUserMedia && window.RTCPeerConnection) {
   onAuthStateChanged(auth, (nextUser) => { user = nextUser; syncSession(); });
   setInterval(syncSession, 800);
+  window.addEventListener("camera-cue:session-changed", syncSession);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
       resumeRemoteAudio();
@@ -58,7 +59,9 @@ function buildUi() {
   status.textContent = "Голосовая связь выключена";
   const audio = document.createElement("div");
   audio.className = "voice-audio";
-  document.body.append(dock, status, audio);
+  const communicationDock = document.getElementById("communicationDock");
+  (communicationDock || document.body).append(dock);
+  document.body.append(status, audio);
   const result = {
     dock,
     join: dock.querySelector(".voice-join"),
