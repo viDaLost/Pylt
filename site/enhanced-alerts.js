@@ -26,7 +26,7 @@ function buildVolumeControls() {
   panel.className = "volume-panel";
   panel.innerHTML = `
     <div class="volume-panel__header">
-      <label for="alertVolume">Громкость сигнала</label>
+      <label for="alertVolume">Громкость</label>
       <output id="alertVolumeValue" for="alertVolume">${volume}%</output>
     </div>
     <div class="volume-panel__row">
@@ -34,16 +34,6 @@ function buildVolumeControls() {
       <input id="alertVolume" type="range" min="0" max="100" step="5" value="${volume}" aria-label="Громкость сигнала">
       <span aria-hidden="true">🔊</span>
     </div>
-    <p class="volume-panel__hint">Установите громкость телефона выше и отключите беззвучный режим.</p>
-    <details class="android-help">
-      <summary>Как включить уведомления на Android</summary>
-      <ol>
-        <li>Нажмите кнопку «Включить всё одним нажатием».</li>
-        <li>В окне Chrome нажмите «Разрешить».</li>
-        <li>Если запроса нет: Настройки телефона → Приложения → Chrome → Уведомления → Разрешить.</li>
-        <li>Для более надёжной работы: меню Chrome ⋮ → «Добавить на главный экран».</li>
-      </ol>
-    </details>
   `;
 
   enableButton.insertAdjacentElement("afterend", panel);
@@ -69,18 +59,18 @@ function buildVolumeControls() {
 function simplifyEnableButton() {
   const label = enableButton.querySelector("#enableAlertsLabel") || enableButton;
   if (!enableButton.classList.contains("is-enabled")) {
-    label.textContent = "Включить всё одним нажатием";
+    label.textContent = "Включить оповещения";
   }
 
   const updatePermissionText = () => {
     if (!("Notification" in window)) return;
 
     if (Notification.permission === "granted") {
-      alertsStatus.textContent = "Звук и уведомления разрешены. Оставьте громкость телефона включённой.";
+      alertsStatus.textContent = "Звук и системные уведомления работают.";
     } else if (Notification.permission === "denied") {
-      alertsStatus.textContent = "Уведомления запрещены. Android: Настройки → Приложения → Chrome → Уведомления → Разрешить.";
+      alertsStatus.textContent = "Звук работает, уведомления запрещены.";
     } else if (localStorage.getItem(ALERTS_KEY) === "enabled") {
-      alertsStatus.textContent = "Нажмите кнопку ещё раз и выберите «Разрешить» в запросе браузера.";
+      alertsStatus.textContent = "Звук работает в открытом приложении.";
     }
   };
 

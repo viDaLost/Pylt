@@ -409,7 +409,7 @@
   }
 }
 
-@media (max-width: 390px) {
+@media (max-width: 340px) {
   .chat-launcher {
     min-width: 0;
     padding-inline: 12px;

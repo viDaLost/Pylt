@@ -24,7 +24,7 @@
   border-radius: 11px;
   color: var(--text);
   background: transparent;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 850;
   cursor: pointer;
   touch-action: manipulation;
@@ -181,7 +181,7 @@
   }
 }
 
-@media (max-width: 390px) {
+@media (max-width: 340px) {
   .voice-join {
     overflow: hidden;
     font-size: 0;
@@ -202,5 +202,19 @@
   .is-receiver .voice-status {
     right: calc(34vw + 16px);
     bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+}
+
+.is-receiver .voice-status {
+  right: 12px;
+  bottom: calc(70px + env(safe-area-inset-bottom));
+  max-width: calc(100% - 24px);
+}
+
+@media (orientation: landscape) and (max-height: 620px) {
+  .is-receiver .voice-status {
+    right: 10px;
+    bottom: calc(66px + env(safe-area-inset-bottom));
+    max-width: calc(34vw - 20px);
   }
 }

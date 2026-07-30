@@ -2360,3 +2360,672 @@ input:focus-visible {
     --muted: #b0bbb6;
   }
 }
+
+/* Compact operational layout */
+:root {
+  --topbar-height: 58px;
+}
+
+main {
+  width: min(880px, 100%);
+  padding: 14px clamp(12px, 3vw, 22px) calc(82px + env(safe-area-inset-bottom));
+}
+
+.is-setup main {
+  display: grid;
+  min-height: 100vh;
+  min-height: 100dvh;
+  place-items: start center;
+  padding-top: max(34px, calc(env(safe-area-inset-top) + 18px));
+  padding-bottom: max(18px, env(safe-area-inset-bottom));
+}
+
+.setup-view,
+.setup-stage,
+.setup-workspace {
+  width: 100%;
+}
+
+.setup-view {
+  padding: 0;
+}
+
+.setup-stage {
+  display: block;
+}
+
+.setup-workspace {
+  max-width: 520px;
+}
+
+.setup-header {
+  margin-bottom: 22px;
+}
+
+.setup-header .brand {
+  gap: 10px;
+  margin: 0;
+}
+
+.setup-header .brand__name {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.brand__tagline {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.workspace-heading {
+  margin: 0 2px 13px;
+}
+
+.workspace-heading .eyebrow {
+  margin-bottom: 5px;
+  font-size: 0.75rem;
+}
+
+.workspace-heading h1 {
+  margin: 0 0 5px;
+  font-size: clamp(1.75rem, 7vw, 2.15rem);
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.workspace-heading .muted {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.role-switch {
+  gap: 5px;
+  margin-bottom: 9px;
+  padding: 4px;
+  border-radius: 16px;
+}
+
+.role-switch__button {
+  gap: 8px;
+  min-height: 50px;
+  border-radius: 12px;
+  padding: 7px 10px;
+}
+
+.role-switch__button svg {
+  width: 19px;
+  height: 19px;
+}
+
+.role-switch__button strong {
+  font-size: 0.82rem;
+}
+
+.role-switch__button small {
+  font-size: 0.75rem;
+}
+
+.setup-card {
+  border-radius: 19px;
+  padding: 17px;
+}
+
+.setup-card__heading {
+  margin-bottom: 12px;
+}
+
+.setup-card__heading h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.field-grid {
+  gap: 9px;
+}
+
+.field {
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 0.75rem;
+}
+
+.field-grid .field {
+  margin-bottom: 0;
+}
+
+.input-shell input,
+.search-field input {
+  min-height: 46px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+.input-shell > svg {
+  left: 13px;
+  width: 17px;
+  height: 17px;
+}
+
+.input-shell input {
+  padding-left: 41px;
+}
+
+.button--large {
+  min-height: 49px;
+  font-size: 0.84rem;
+}
+
+.setup-card .button--large {
+  margin-top: 12px;
+}
+
+.install-card {
+  gap: 9px;
+  margin-top: 9px;
+  border-radius: 16px;
+  padding: 9px 10px;
+}
+
+.install-card__icon {
+  width: 34px;
+  height: 34px;
+}
+
+.install-card__copy strong {
+  font-size: 0.75rem;
+}
+
+.install-card__copy small {
+  font-size: 0.75rem;
+}
+
+.install-card .button {
+  font-size: 0.75rem;
+}
+
+.setup-note {
+  justify-content: center;
+  margin-top: 9px;
+  font-size: 0.75rem;
+}
+
+.resume-card {
+  margin-bottom: 12px;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.resume-card h2 {
+  font-size: 1.1rem;
+}
+
+.resume-card .muted {
+  margin-bottom: 11px;
+  font-size: 0.74rem;
+}
+
+.topbar__inner {
+  width: min(880px, 100%);
+  gap: 10px;
+  padding-inline: clamp(10px, 3vw, 20px);
+}
+
+.topbar__wordmark {
+  font-size: 0.75rem;
+}
+
+.brand-symbol--small {
+  width: 31px;
+  height: 31px;
+  border-radius: 9px;
+}
+
+.connection-pill {
+  min-height: 34px;
+  padding-inline: 10px;
+  font-size: 0.75rem;
+}
+
+.room-code {
+  min-height: 36px;
+  border-radius: 11px;
+  padding-inline: 10px;
+}
+
+.room-code strong {
+  font-size: 0.75rem;
+}
+
+.controller-view {
+  padding: 0;
+}
+
+.controller-layout {
+  display: block;
+  max-width: 820px;
+  margin-inline: auto;
+}
+
+.controller-hero {
+  gap: 16px;
+  min-height: 132px;
+  border-radius: 19px;
+  padding: 16px 18px;
+}
+
+.controller-hero::before {
+  opacity: 0.08;
+}
+
+.controller-hero__label {
+  margin: 11px 0 2px;
+  font-size: 0.75rem;
+}
+
+.controller-hero h1 {
+  margin-bottom: 5px;
+  font-size: clamp(2rem, 9vw, 3rem);
+  line-height: 0.95;
+}
+
+.controller-hero .muted {
+  font-size: 0.75rem;
+}
+
+.signal-orbit {
+  width: 76px;
+  box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.012);
+}
+
+.signal-orbit::before {
+  inset: 8px;
+}
+
+.signal-orbit::after {
+  inset: 17px;
+}
+
+.mini-signal {
+  border-width: 5px;
+}
+
+.controller-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 8px 0 17px;
+}
+
+.controller-actions .button {
+  min-height: 43px;
+  padding-inline: 10px;
+  font-size: 0.75rem;
+}
+
+.participants-heading {
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+.participants-heading .eyebrow {
+  display: none;
+}
+
+.section-title-row h2 {
+  font-size: 1.25rem;
+}
+
+.counter {
+  min-width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}
+
+.search-field {
+  width: min(210px, 52vw);
+}
+
+.search-field input {
+  min-height: 39px;
+  padding-left: 37px;
+  font-size: 0.75rem;
+}
+
+.search-field > svg {
+  left: 12px;
+  width: 15px;
+  height: 15px;
+}
+
+.participants-list {
+  gap: 7px;
+}
+
+.participant-card {
+  min-height: 62px;
+  gap: 10px;
+  border-radius: 15px;
+  padding: 8px 10px;
+}
+
+.participant-card__signal {
+  width: 32px;
+  height: 32px;
+  border-width: 5px;
+}
+
+.participant-card__name {
+  font-size: 0.84rem;
+}
+
+.participant-card__status {
+  margin-top: 2px;
+  font-size: 0.75rem;
+}
+
+.participant-card__action {
+  min-height: 32px;
+  padding-inline: 9px;
+  font-size: 0.75rem;
+}
+
+.empty-state {
+  border-radius: 18px;
+  padding: 18px 14px;
+}
+
+.empty-state__visual {
+  display: none;
+}
+
+.empty-state h3 {
+  margin-bottom: 4px;
+  font-size: 0.95rem;
+}
+
+.empty-state p {
+  margin-bottom: 12px;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.empty-state .button {
+  min-height: 40px;
+  font-size: 0.75rem;
+}
+
+.controller-finish {
+  width: 100%;
+  min-height: 41px;
+  margin-top: 12px;
+  font-size: 0.75rem;
+}
+
+.receiver-signal {
+  padding: calc(var(--topbar-height) + env(safe-area-inset-top) + 10px) 18px 14px;
+}
+
+.receiver-signal::before {
+  width: min(60vmin, 330px);
+  box-shadow:
+    0 0 0 10vmin rgba(255, 255, 255, 0.015),
+    0 0 0 20vmin rgba(255, 255, 255, 0.009);
+}
+
+.receiver-signal::after {
+  width: min(24vmin, 150px);
+}
+
+.receiver-signal__badge {
+  gap: 7px;
+  margin-bottom: clamp(12px, 2.5vh, 22px);
+  padding: 8px 11px;
+}
+
+.receiver-signal__kicker {
+  font-size: clamp(0.75rem, 2.4vw, 0.82rem);
+}
+
+.receiver-signal h1 {
+  margin-bottom: clamp(10px, 2vh, 18px);
+  font-size: clamp(3.6rem, 16vw, 7.4rem);
+}
+
+.receiver-signal__content > p:last-child {
+  font-size: clamp(0.9rem, 3vw, 1.25rem);
+}
+
+.receiver-signal__corners {
+  inset: calc(var(--topbar-height) + env(safe-area-inset-top) + 14px) 16px 14px;
+}
+
+.receiver-footer {
+  gap: 8px 12px;
+  padding: 10px 12px calc(68px + env(safe-area-inset-bottom));
+}
+
+.alert-controls {
+  gap: 6px;
+}
+
+.button--alert {
+  min-height: 44px;
+  font-size: 0.76rem;
+}
+
+.alert-controls__status {
+  overflow: hidden;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.receiver-footer__identity {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.receiver-footer__identity .muted {
+  font-size: 0.75rem;
+}
+
+.receiver-footer strong {
+  margin: 0;
+  font-size: 0.78rem;
+}
+
+.receiver-footer #leaveRoomButton {
+  min-height: 40px;
+}
+
+.communication-dock,
+.is-receiver .communication-dock {
+  right: 12px;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  left: 12px;
+  align-items: stretch;
+  max-width: none;
+}
+
+.toast-region {
+  right: 12px;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+  width: calc(100% - 24px);
+}
+
+@media (min-width: 700px) {
+  .is-setup main {
+    place-items: center;
+  }
+
+  .field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .participants-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  main {
+    padding-inline: 10px;
+  }
+
+  .topbar__inner {
+    padding-inline: 10px;
+  }
+
+  .topbar__wordmark,
+  .room-code__label {
+    display: none;
+  }
+
+  .connection-pill {
+    max-width: 110px;
+  }
+
+  .role-switch__button {
+    display: flex;
+    justify-items: initial;
+    text-align: left;
+  }
+
+  .role-switch__button small {
+    display: block;
+  }
+
+  .setup-card,
+  .resume-card,
+  .ended-card {
+    border-radius: 19px;
+    padding: 16px;
+  }
+
+  .install-card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .install-card .button {
+    grid-column: auto;
+    width: auto;
+  }
+
+  .participants-heading {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .search-field {
+    width: min(190px, 53vw);
+  }
+
+  .controller-hero {
+    gap: 12px;
+    min-height: 126px;
+    border-radius: 18px;
+    padding: 15px;
+  }
+
+  .controller-hero__label {
+    margin-top: 10px;
+  }
+
+  .signal-orbit {
+    width: 70px;
+  }
+
+  .participant-card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .participant-card__action {
+    grid-column: auto;
+    width: auto;
+    min-height: 32px;
+  }
+
+  .receiver-signal {
+    padding-inline: 14px;
+  }
+
+  .receiver-signal h1 {
+    font-size: clamp(3.2rem, 18vw, 5.4rem);
+  }
+
+  .receiver-footer {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-inline: 10px;
+  }
+
+  .receiver-footer #leaveRoomButton {
+    width: 42px;
+    padding: 0;
+    font-size: 0;
+  }
+}
+
+@media (max-width: 370px) {
+  .brand__tagline,
+  .role-switch__button small,
+  .install-card__copy small {
+    display: none;
+  }
+
+  .connection-pill {
+    max-width: 94px;
+  }
+
+  .controller-actions .button {
+    font-size: 0.68rem;
+  }
+
+  .search-field {
+    width: 50vw;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 620px) {
+  .receiver-view {
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 34vw);
+    grid-template-rows: 1fr;
+  }
+
+  .receiver-signal {
+    padding: calc(var(--topbar-height) + env(safe-area-inset-top) + 8px) 18px 10px;
+  }
+
+  .receiver-signal__badge {
+    margin-bottom: 10px;
+  }
+
+  .receiver-signal h1 {
+    margin-bottom: 8px;
+    font-size: clamp(3rem, 10vw, 5.8rem);
+  }
+
+  .receiver-footer {
+    grid-template-columns: 1fr auto;
+    align-content: center;
+    padding: calc(var(--topbar-height) + env(safe-area-inset-top) + 8px) 10px calc(62px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+  }
+
+  .receiver-footer #leaveRoomButton {
+    order: initial;
+    width: 42px;
+    font-size: 0;
+  }
+
+  .is-receiver .communication-dock {
+    right: 10px;
+    bottom: calc(8px + env(safe-area-inset-bottom));
+    left: calc(66vw + 10px);
+  }
+}
