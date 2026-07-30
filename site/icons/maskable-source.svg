@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="50" y1="20" x2="470" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#192021"/>
+      <stop offset="1" stop-color="#050708"/>
+    </linearGradient>
+    <radialGradient id="signal" cx="0" cy="0" r="1" gradientTransform="translate(238 224) rotate(57) scale(135)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E7FFA9"/>
+      <stop offset=".5" stop-color="#C8FF3D"/>
+      <stop offset="1" stop-color="#95D400"/>
+    </radialGradient>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="15" result="blur"/>
+      <feColorMatrix in="blur" values="0 0 0 0 0.55 0 0 0 0 1 0 0 0 0 0.15 0 0 0 .6 0"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#FFFFFF" stroke-opacity=".03"/>
+    </pattern>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <rect width="512" height="512" fill="url(#grid)"/>
+  <circle cx="256" cy="256" r="151" fill="none" stroke="#FFFFFF" stroke-opacity=".07" stroke-width="2"/>
+  <circle cx="256" cy="256" r="116" fill="none" stroke="#FFFFFF" stroke-opacity=".1" stroke-width="2" stroke-dasharray="7 11"/>
+  <path d="M132 196v-48c0-9 7-16 16-16h48M316 132h48c9 0 16 7 16 16v48M380 316v48c0 9-7 16-16 16h-48M196 380h-48c-9 0-16-7-16-16v-48" fill="none" stroke="#C8FF3D" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="256" cy="256" r="76" fill="#0A1205" stroke="#1B2813" stroke-width="13"/>
+  <circle cx="256" cy="256" r="56" fill="url(#signal)" filter="url(#glow)"/>
+  <circle cx="256" cy="256" r="18" fill="#F7FFE7" fill-opacity=".26"/>
+  <circle cx="370" cy="142" r="19" fill="#FF5260" stroke="#331015" stroke-width="8"/>
+  <circle cx="370" cy="142" r="7" fill="#FFD8DC"/>
+</svg>

@@ -29,6 +29,7 @@ if (auth && db) {
     syncSession();
   });
   window.setInterval(syncSession, 700);
+  window.addEventListener("camera-cue:session-changed", syncSession);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") syncSession();
   });
@@ -62,7 +63,9 @@ function buildChatUi() {
       </form>
     </section>`;
 
-  document.body.append(launcher, overlay);
+  const communicationDock = document.getElementById("communicationDock");
+  (communicationDock || document.body).append(launcher);
+  document.body.append(overlay);
   const result = {
     launcher,
     overlay,

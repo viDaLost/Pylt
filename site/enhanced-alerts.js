@@ -67,8 +67,9 @@ function buildVolumeControls() {
 }
 
 function simplifyEnableButton() {
+  const label = enableButton.querySelector("#enableAlertsLabel") || enableButton;
   if (!enableButton.classList.contains("is-enabled")) {
-    enableButton.textContent = "Включить всё одним нажатием";
+    label.textContent = "Включить всё одним нажатием";
   }
 
   const updatePermissionText = () => {
@@ -86,7 +87,7 @@ function simplifyEnableButton() {
   enableButton.addEventListener("click", () => {
     setTimeout(() => {
       if (enableButton.classList.contains("is-enabled")) {
-        enableButton.textContent = "Оповещения включены";
+        label.textContent = "Оповещения включены";
       }
       updatePermissionText();
     }, 700);
